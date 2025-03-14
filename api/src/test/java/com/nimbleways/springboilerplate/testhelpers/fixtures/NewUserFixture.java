@@ -3,7 +3,6 @@ package com.nimbleways.springboilerplate.testhelpers.fixtures;
 import com.nimbleways.springboilerplate.common.domain.ports.PasswordEncoderPort;
 import com.nimbleways.springboilerplate.common.domain.ports.TimeProviderPort;
 import com.nimbleways.springboilerplate.common.domain.valueobjects.Role;
-import com.nimbleways.springboilerplate.common.domain.valueobjects.Username;
 import com.nimbleways.springboilerplate.common.infra.adapters.fakes.FakePasswordEncoder;
 import com.nimbleways.springboilerplate.common.utils.collections.Immutable;
 import com.nimbleways.springboilerplate.features.users.domain.valueobjects.NewUser;
@@ -24,15 +23,14 @@ public class NewUserFixture {
     @Builder(factoryMethod = "aNewUser")
     public static NewUser buildNewUser(
             @Nullable String name,
-            @Nullable String username,
+            @Nullable String email,
             @Nullable String plainPassword,
             @Nullable ImmutableSet<Role> roles,
             @Nullable TimeProviderPort timeProvider,
-            @Nullable PasswordEncoderPort passwordEncoder
-    ) {
+            @Nullable PasswordEncoderPort passwordEncoder) {
         UUID id = UUID.randomUUID();
         String nameValue = requireNonNullElse(name, "name-" + id);
-        String usernameValue = requireNonNullElse(username, "username-" + id);
+        String emailValue = requireNonNullElse(email, "email-" + id);
         ImmutableSet<Role> rolesValue = requireNonNullElse(roles, DEFAULT_ROLES);
         PasswordEncoderPort passwordEncoderValue = requireNonNullElse(passwordEncoder, DEFAULT_PASSWORD_ENCODER);
         String plainPasswordValue = requireNonNullElse(plainPassword, "password-" + id);
@@ -40,7 +38,7 @@ public class NewUserFixture {
 
         return new NewUser(
                 nameValue,
-                new Username(usernameValue),
+                emailValue,
                 passwordEncoderValue.encode(plainPasswordValue),
                 timeProviderValue.instant(),
                 rolesValue);

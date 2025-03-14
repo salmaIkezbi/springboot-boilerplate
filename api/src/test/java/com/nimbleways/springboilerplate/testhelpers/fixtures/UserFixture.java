@@ -2,7 +2,6 @@ package com.nimbleways.springboilerplate.testhelpers.fixtures;
 
 import com.nimbleways.springboilerplate.common.domain.ports.TimeProviderPort;
 import com.nimbleways.springboilerplate.common.domain.valueobjects.Role;
-import com.nimbleways.springboilerplate.common.domain.valueobjects.Username;
 import com.nimbleways.springboilerplate.common.utils.collections.Immutable;
 import com.nimbleways.springboilerplate.features.users.domain.entities.User;
 import com.nimbleways.springboilerplate.testhelpers.configurations.TimeTestConfiguration;
@@ -23,22 +22,20 @@ public class UserFixture {
     public static User buildUser(
             @Nullable UUID id,
             @Nullable String name,
-            @Nullable String username,
+            @Nullable String email,
             @Nullable TimeProviderPort timeProvider,
-            @Nullable ImmutableSet<Role> roles
-    ) {
+            @Nullable ImmutableSet<Role> roles) {
         UUID idValue = requireNonNullElse(id, UUID.randomUUID());
         String nameValue = requireNonNullElse(name, "name");
-        String usernameValue = requireNonNullElse(username, "username");
+        String emailValue = requireNonNullElse(email, "email");
         TimeProviderPort timeProviderValue = requireNonNullElse(timeProvider, DEFAULT_TIME_PROVIDER);
         ImmutableSet<Role> rolesValue = requireNonNullElse(roles, DEFAULT_ROLES);
 
         return new User(
                 idValue,
                 nameValue,
-                new Username(usernameValue),
+                emailValue,
                 timeProviderValue.instant(),
-                rolesValue
-        );
+                rolesValue);
     }
 }

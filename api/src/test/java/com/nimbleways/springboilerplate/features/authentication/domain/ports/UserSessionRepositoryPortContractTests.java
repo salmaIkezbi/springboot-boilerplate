@@ -42,13 +42,13 @@ public abstract class UserSessionRepositoryPortContractTests {
     @Test
     void creating_a_usersession_for_a_non_existing_user_throws_CannotCreateUserSessionInRepositoryException() {
         UserSession userSession = new UserSession(aRefreshToken(), timeProvider.instant(),
-            aUserPrincipal().build());
+                aUserPrincipal().build());
 
         Exception exception = assertThrows(Exception.class,
-            () -> userSessionRepository.create(userSession));
+                () -> userSessionRepository.create(userSession));
 
         assertEquals(CannotCreateUserSessionInRepositoryException.class, exception.getClass());
-        assertEquals("Cannot create UserSession in repository for user 'username'", exception.getMessage());
+        assertEquals("Cannot create UserSession in repository for user 'email'", exception.getMessage());
     }
 
     @Test
@@ -63,15 +63,15 @@ public abstract class UserSessionRepositoryPortContractTests {
 
     @Test
     void creating_a_usersession_with_an_existing_refreshtoken_throws_CannotCreateUserSessionInRepositoryException() {
-        User user = userRepository.create(aNewUser().username("username").build());
+        User user = userRepository.create(aNewUser().email("email").build());
         UserSession userSession = newUserSession(user, timeProvider.instant());
         userSessionRepository.create(userSession);
 
         Exception exception = assertThrows(Exception.class,
-            () -> userSessionRepository.create(userSession));
+                () -> userSessionRepository.create(userSession));
 
         assertEquals(CannotCreateUserSessionInRepositoryException.class, exception.getClass());
-        assertEquals("Cannot create UserSession in repository for user 'username'", exception.getMessage());
+        assertEquals("Cannot create UserSession in repository for user 'email'", exception.getMessage());
     }
 
     @Test
@@ -90,7 +90,7 @@ public abstract class UserSessionRepositoryPortContractTests {
         RefreshToken randomRefreshToken = aRefreshToken();
 
         Exception exception = assertThrows(Exception.class,
-            () -> userSessionRepository.deleteUserSessionByRefreshToken(randomRefreshToken));
+                () -> userSessionRepository.deleteUserSessionByRefreshToken(randomRefreshToken));
 
         assertEquals(RefreshTokenExpiredOrNotFoundException.class, exception.getClass());
     }
@@ -102,10 +102,9 @@ public abstract class UserSessionRepositoryPortContractTests {
         userSessionRepository.create(userSession);
 
         Optional<UserSession> insertedUserSession = userSessionRepository
-            .findByRefreshTokenAndExpirationDateAfter(
-                userSession.refreshToken(),
-                userSession.expirationDate().plusMillis(1)
-            );
+                .findByRefreshTokenAndExpirationDateAfter(
+                        userSession.refreshToken(),
+                        userSession.expirationDate().plusMillis(1));
 
         assertTrue(insertedUserSession.isEmpty());
     }
@@ -117,10 +116,9 @@ public abstract class UserSessionRepositoryPortContractTests {
         userSessionRepository.create(userSession);
 
         Optional<UserSession> insertedUserSessionOptional = userSessionRepository
-            .findByRefreshTokenAndExpirationDateAfter(
-                userSession.refreshToken(),
-                userSession.expirationDate()
-            );
+                .findByRefreshTokenAndExpirationDateAfter(
+                        userSession.refreshToken(),
+                        userSession.expirationDate());
 
         UserSession insertedUserSession = assertPresent(insertedUserSessionOptional);
         assertEquals(userSession, insertedUserSession);
@@ -129,10 +127,9 @@ public abstract class UserSessionRepositoryPortContractTests {
     @Test
     void finding_by_expiration_date_does_not_return_non_existing_session() {
         Optional<UserSession> insertedUserSession = userSessionRepository
-            .findByRefreshTokenAndExpirationDateAfter(
-                aRefreshToken(),
-                timeProvider.instant()
-            );
+                .findByRefreshTokenAndExpirationDateAfter(
+                        aRefreshToken(),
+                        timeProvider.instant());
 
         assertTrue(insertedUserSession.isEmpty());
     }
@@ -157,15 +154,16 @@ public abstract class UserSessionRepositoryPortContractTests {
     @NotNull
     private UserSession newUserSession(User user, Instant expirationDate) {
         return new UserSession(
-            aRefreshToken(),
-            expirationDate,
-            toUserPrincipal(user)
-        );
+                aRefreshToken(),
+                expirationDate,
+                toUserPrincipal(user));
     }
 
-
-    // --------------------------------- Protected Methods ------------------------------- //
+    // --------------------------------- Protected Methods
+    // ------------------------------- //
     protected abstract UserSessionRepositoryPort getUserSessionRepository();
+
     protected abstract UserRepositoryPort getUserRepository();
+
     protected abstract ImmutableList<UserSession> getAllUserSessions();
 }

@@ -1,7 +1,0 @@
-# Default ignored files
-/shelf/
-/workspace.xml
-
-# Should be ignored when using Maven or Gradle
-/libraries/
-/modules.xml

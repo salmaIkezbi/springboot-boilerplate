@@ -12,13 +12,13 @@ import static com.nimbleways.springboilerplate.testhelpers.utils.JsonUtils.jsonI
 class ActuatorSecurityApplicationTests extends BaseApplicationTestsWithoutDb {
 
     @Test
-    void get_on_actuator_base_path_with_good_username_and_password_returns_200(
-            @Value("${management.server.user}") String username,
+    void get_on_actuator_base_path_with_good_email_and_password_returns_200(
+            @Value("${management.server.user}") String email,
             @Value("${management.server.password}") String password) {
         // WHEN
         webTestClient
                 .get().uri("/actuatorz")
-                .header("Authorization", baseAuthHeaderValue(username, password))
+                .header("Authorization", baseAuthHeaderValue(email, password))
                 .exchange()
 
         // THEN
@@ -30,13 +30,13 @@ class ActuatorSecurityApplicationTests extends BaseApplicationTestsWithoutDb {
     }
 
     @Test
-    void get_on_actuator_base_path_with_good_username_and_bad_password_returns_401_and_WWW_Authenticate_header(
-            @Value("${management.server.user}") String username
+    void get_on_actuator_base_path_with_good_email_and_bad_password_returns_401_and_WWW_Authenticate_header(
+            @Value("${management.server.user}") String email
     ) {
         // WHEN
         webTestClient
                 .get().uri("/actuatorz")
-                .header("Authorization", baseAuthHeaderValue(username, "bad_password"))
+                .header("Authorization", baseAuthHeaderValue(email, "bad_password"))
                 .exchange()
 
                 // THEN
@@ -49,7 +49,7 @@ class ActuatorSecurityApplicationTests extends BaseApplicationTestsWithoutDb {
     }
 
     @Test
-    void get_on_actuator_base_path_with_bad_username_and_password_returns_401_and_WWW_Authenticate_header() {
+    void get_on_actuator_base_path_with_bad_email_and_password_returns_401_and_WWW_Authenticate_header() {
         // WHEN
         webTestClient
                 .get().uri("/actuatorz")
@@ -66,7 +66,7 @@ class ActuatorSecurityApplicationTests extends BaseApplicationTestsWithoutDb {
     }
 
     @Test
-    void get_on_actuator_base_path_without_username_and_password_returns_401_and_WWW_Authenticate_header() {
+    void get_on_actuator_base_path_without_email_and_password_returns_401_and_WWW_Authenticate_header() {
         // WHEN
         webTestClient
                 .get().uri("/actuatorz")
@@ -81,8 +81,8 @@ class ActuatorSecurityApplicationTests extends BaseApplicationTestsWithoutDb {
                         .formatted(contextPath), jsonIgnoreArrayOrder);
     }
 
-    private static String baseAuthHeaderValue(String username, String password) {
-        String credentials = username + ":" + password;
+    private static String baseAuthHeaderValue(String email, String password) {
+        String credentials = email + ":" + password;
         return "Basic " + Base64.getEncoder().encodeToString(credentials.getBytes());
     }
 }

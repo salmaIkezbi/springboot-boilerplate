@@ -16,12 +16,12 @@ import java.io.IOException;
 public class SimpleBasicAuthenticationFilter implements Filter {
     public static final BasicAuthenticationConverter BASIC_AUTHENTICATION_CONVERTER = new BasicAuthenticationConverter();
     private final String realm;
-    private final String username;
+    private final String email;
     private final String password;
 
-    public SimpleBasicAuthenticationFilter(String realm, String username, String password) {
+    public SimpleBasicAuthenticationFilter(String realm, String email, String password) {
         this.realm = realm;
-        this.username = username;
+        this.email = email;
         this.password = password;
     }
 
@@ -31,7 +31,8 @@ public class SimpleBasicAuthenticationFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         if (!isAuthorized(httpRequest)) {
-            String headerValue = "%s realm=\"%s\"".formatted(BasicAuthenticationConverter.AUTHENTICATION_SCHEME_BASIC, realm);
+            String headerValue = "%s realm=\"%s\"".formatted(BasicAuthenticationConverter.AUTHENTICATION_SCHEME_BASIC,
+                    realm);
             httpResponse.setHeader("WWW-Authenticate", headerValue);
             throw new AuthorizationDeniedException("Access Denied");
         }
@@ -41,7 +42,7 @@ public class SimpleBasicAuthenticationFilter implements Filter {
     private boolean isAuthorized(HttpServletRequest httpRequest) {
         UsernamePasswordAuthenticationToken authenticationToken = BASIC_AUTHENTICATION_CONVERTER.convert(httpRequest);
         return authenticationToken != null
-                && username.equals(authenticationToken.getPrincipal())
+                && email.equals(authenticationToken.getPrincipal())
                 && password.equals(authenticationToken.getCredentials());
     }
 }

@@ -1,21 +1,16 @@
 package com.nimbleways.springboilerplate.features.authentication.api.endpoints.login;
 
-import com.nimbleways.springboilerplate.common.domain.valueobjects.Username;
 import com.nimbleways.springboilerplate.features.authentication.domain.usecases.login.LoginCommand;
 import jakarta.validation.constraints.NotBlank;
 
 public record LoginRequest(
-    @NotBlank
-    String username,
+        @NotBlank String email,
 
-    @NotBlank
-    String password
-) {
+        @NotBlank String password) {
 
     public LoginCommand toCommand() {
         return new LoginCommand(
-            new Username(username()),
-            password()
-        );
+                email(),
+                password());
     }
 }

@@ -5,7 +5,6 @@ import static org.checkerframework.checker.nullness.util.NullnessUtil.castNonNul
 import com.nimbleways.springboilerplate.common.domain.ports.RandomGeneratorPort;
 import com.nimbleways.springboilerplate.common.domain.ports.TimeProviderPort;
 import com.nimbleways.springboilerplate.common.domain.valueobjects.Role;
-import com.nimbleways.springboilerplate.common.domain.valueobjects.Username;
 import com.nimbleways.springboilerplate.common.infra.mappers.RoleMapper;
 import com.nimbleways.springboilerplate.common.infra.properties.JwtProperties;
 import com.nimbleways.springboilerplate.features.authentication.domain.entities.TokenClaims;
@@ -43,10 +42,9 @@ public class JwtTokenClaimsCodec implements TokenClaimsCodecPort, JwtDecoder {
     private final SecretKey jwtSigningKey;
 
     public JwtTokenClaimsCodec(
-        JwtProperties jwtProperties,
-        RandomGeneratorPort randomGenerator,
-        TimeProviderPort timeProvider
-    ) {
+            JwtProperties jwtProperties,
+            RandomGeneratorPort randomGenerator,
+            TimeProviderPort timeProvider) {
         this.jwtProperties = jwtProperties;
         this.randomGenerator = randomGenerator;
         this.timeProvider = timeProvider;
@@ -56,26 +54,26 @@ public class JwtTokenClaimsCodec implements TokenClaimsCodecPort, JwtDecoder {
     @Override
     public AccessToken encode(TokenClaims tokenClaims) {
         return new AccessToken(
-            Jwts.builder()
-            .id(randomGenerator.uuid().toString().replace("-", ""))
-            .subject(getSubject(tokenClaims.userPrincipal()))
-            .issuer(jwtProperties.issuer())
-            .issuedAt(Date.from(tokenClaims.creationTime()))
-            .expiration(Date.from(tokenClaims.expirationTime()))
-            .signWith(jwtSigningKey)
-            .claims(Map.of("scope", RoleMapper.INSTANCE.fromValueObjects(tokenClaims.userPrincipal().roles())))
-            .compact());
+                Jwts.builder()
+                        .id(randomGenerator.uuid().toString().replace("-", ""))
+                        .subject(getSubject(tokenClaims.userPrincipal()))
+                        .issuer(jwtProperties.issuer())
+                        .issuedAt(Date.from(tokenClaims.creationTime()))
+                        .expiration(Date.from(tokenClaims.expirationTime()))
+                        .signWith(jwtSigningKey)
+                        .claims(Map.of("scope",
+                                RoleMapper.INSTANCE.fromValueObjects(tokenClaims.userPrincipal().roles())))
+                        .compact());
     }
 
     @Override
     public TokenClaims decodeWithoutExpirationValidation(AccessToken token) {
         final Jwt jwt = getJwtWithoutExpirationValidation(token);
         return new TokenClaims(
-            getUserPrincipal(jwt),
-            // issuedAt and expiresAt are guaranteed to be not null
-            castNonNull(jwt.getIssuedAt()),
-            castNonNull(jwt.getExpiresAt())
-        );
+                getUserPrincipal(jwt),
+                // issuedAt and expiresAt are guaranteed to be not null
+                castNonNull(jwt.getIssuedAt()),
+                castNonNull(jwt.getExpiresAt()));
     }
 
     @Override
@@ -92,7 +90,7 @@ public class JwtTokenClaimsCodec implements TokenClaimsCodecPort, JwtDecoder {
     private Jwt getJwtWithoutExpirationValidation(AccessToken token) {
         try {
             return internalDecode(token.value());
-        } catch(ExpiredJwtException ex){
+        } catch (ExpiredJwtException ex) {
             return toJwt(token.value(), ex.getHeader(), ex.getClaims());
         } catch (JwtException ex) {
             throw new AccessTokenDecodingException(ex, token);
@@ -101,37 +99,34 @@ public class JwtTokenClaimsCodec implements TokenClaimsCodecPort, JwtDecoder {
 
     private Jws<Claims> getClaimsJws(String token) {
         return Jwts.parser()
-            .clock(() -> Date.from(timeProvider.instant()))
-            .verifyWith(jwtSigningKey)
-            .build()
-            .parseSignedClaims(token);
+                .clock(() -> Date.from(timeProvider.instant()))
+                .verifyWith(jwtSigningKey)
+                .build()
+                .parseSignedClaims(token);
     }
 
     @NotNull
     private static JwtValidationException getSpringException(ExpiredJwtException ex) {
         OAuth2Error expiredError = new OAuth2Error(
-            "invalid_token",
-            "Jwt expired at " + ex.getClaims().getExpiration().toInstant(),
-            "https://tools.ietf.org/html/rfc6750#section-3.1"
-        );
+                "invalid_token",
+                "Jwt expired at " + ex.getClaims().getExpiration().toInstant(),
+                "https://tools.ietf.org/html/rfc6750#section-3.1");
         return new JwtValidationException(
-            "An error occurred while attempting to decode the Jwt: " + expiredError.getDescription(),
-            List.of(expiredError)
-        );
+                "An error occurred while attempting to decode the Jwt: " + expiredError.getDescription(),
+                List.of(expiredError));
     }
 
     private static UserPrincipal getUserPrincipal(final Jwt jwt) {
         String[] subjectFields = jwt.getSubject().split(",");
         ImmutableSet<Role> roles = getRoles(jwt);
         return new UserPrincipal(
-            UUID.fromString(subjectFields[0]),
-            new Username(subjectFields[1]),
-            roles
-        );
+                UUID.fromString(subjectFields[0]),
+                subjectFields[1],
+                roles);
     }
 
     private static String getSubject(final UserPrincipal userPrincipal) {
-        return "%s,%s".formatted(userPrincipal.id(), userPrincipal.username().value());
+        return "%s,%s".formatted(userPrincipal.id(), userPrincipal.email());
     }
 
     private static ImmutableSet<Role> getRoles(Jwt jwt) {
@@ -147,7 +142,7 @@ public class JwtTokenClaimsCodec implements TokenClaimsCodecPort, JwtDecoder {
             }
         }
         throw new AccessTokenDecodingException(
-            "claim 'scope' is not a list of string: " + roleClaim, token);
+                "claim 'scope' is not a list of string: " + roleClaim, token);
     }
 
     @SuppressWarnings("unchecked")
@@ -164,12 +159,12 @@ public class JwtTokenClaimsCodec implements TokenClaimsCodecPort, JwtDecoder {
     @NotNull
     private static Jwt toJwt(String token, Map<String, Object> headers, Claims payload) {
         return Jwt
-            .withTokenValue(token)
-            .headers(map -> map.putAll(headers))
-            .claims(claims -> claims.putAll(payload))
-            .issuedAt(payload.getIssuedAt().toInstant())
-            .notBefore(payload.getIssuedAt().toInstant())
-            .expiresAt(payload.getExpiration().toInstant())
-            .build();
+                .withTokenValue(token)
+                .headers(map -> map.putAll(headers))
+                .claims(claims -> claims.putAll(payload))
+                .issuedAt(payload.getIssuedAt().toInstant())
+                .notBefore(payload.getIssuedAt().toInstant())
+                .expiresAt(payload.getExpiration().toInstant())
+                .build();
     }
 }
