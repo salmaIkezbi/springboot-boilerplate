@@ -44,7 +44,8 @@ public class FakeUserRepository implements UserRepositoryPort, UserCredentialsRe
     private static User toUser(NewUser userToCreate) {
         return new User(UUID.randomUUID(), userToCreate.name(), userToCreate.email(),
                 userToCreate.creationDateTime(),
-                userToCreate.roles());
+                userToCreate.role(),
+                userToCreate.employmentDate());
     }
 
     private void ensureUserDoesNotExist(String email) {

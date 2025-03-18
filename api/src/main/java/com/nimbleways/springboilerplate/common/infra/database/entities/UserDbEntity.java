@@ -2,8 +2,6 @@ package com.nimbleways.springboilerplate.common.infra.database.entities;
 
 import com.nimbleways.springboilerplate.common.domain.valueobjects.Email;
 import com.nimbleways.springboilerplate.common.domain.valueobjects.EncodedPassword;
-import com.nimbleways.springboilerplate.common.domain.valueobjects.Role;
-import com.nimbleways.springboilerplate.common.utils.collections.Immutable;
 import com.nimbleways.springboilerplate.features.authentication.domain.entities.UserCredential;
 import com.nimbleways.springboilerplate.features.authentication.domain.entities.UserPrincipal;
 import com.nimbleways.springboilerplate.features.users.domain.entities.User;
@@ -15,13 +13,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.eclipse.collections.api.set.ImmutableSet;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @SuppressWarnings("PMD.ExcessiveImports")
@@ -58,19 +53,23 @@ public class UserDbEntity {
     @NotNull
     private Instant createdAt;
 
-    @ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
-    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @Column(name = "role")
     @NotNull
-    private Collection<RoleDbEntity> roles = new ArrayList<>();
+    private String role;
+
+    @Column(name = "employment_date")
+    @NotNull
+    private LocalDate employmentDate;
 
     public static UserDbEntity from(NewUser newUser) {
-        List<RoleDbEntity> roles = newUser.roles().stream().map(RoleDbEntity::newFromRole).toList();
+        String role = newUser.role();
         final UserDbEntity userDbEntity = new UserDbEntity();
         userDbEntity.name(newUser.name());
         userDbEntity.email(newUser.email().value());
         userDbEntity.password(newUser.encodedPassword().value());
         userDbEntity.createdAt(newUser.creationDateTime());
-        userDbEntity.roles(roles);
+        userDbEntity.role(role);
+        userDbEntity.employmentDate(newUser.employmentDate());
         return userDbEntity;
     }
 
@@ -80,22 +79,18 @@ public class UserDbEntity {
                 name,
                 new Email(email),
                 createdAt,
-                getRoles());
+                role, employmentDate);
     }
 
     public UserPrincipal toUserPrincipal() {
         return new UserPrincipal(
                 id,
                 new Email(email),
-                getRoles());
+                role);
     }
 
     public UserCredential toUserCredential() {
         return new UserCredential(toUserPrincipal(), new EncodedPassword(password()));
     }
 
-    @NotNull
-    private ImmutableSet<Role> getRoles() {
-        return Immutable.collectSet(roles, RoleDbEntity::toRole);
-    }
 }
