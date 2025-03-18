@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.nimbleways.springboilerplate.testhelpers.baseclasses.BaseWebMvcIntegrationTests;
 import com.nimbleways.springboilerplate.features.authentication.domain.usecases.suts.LoginSut;
+import com.nimbleways.springboilerplate.testhelpers.fixtures.NewUserFixture;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -26,10 +27,13 @@ class LoginEndpointIntegrationTests extends BaseWebMvcIntegrationTests {
     @Test
     void returns_AccessToken_and_RefreshToken_in_cookies() throws Exception {
         // GIVEN
+        NewUserFixture.UserData userData = new NewUserFixture.UserData.Builder()
+                .email("emailCreated")
+                .plainPassword("passwordCreated")
+                .build();
         loginSut.userRepository().create(
                 aNewUser()
-                        .email("emailCreated")
-                        .plainPassword("passwordCreated")
+                        .userData(userData)
                         .build());
 
         // WHEN

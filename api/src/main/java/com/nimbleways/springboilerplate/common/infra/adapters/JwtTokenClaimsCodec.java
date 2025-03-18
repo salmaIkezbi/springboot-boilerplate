@@ -23,7 +23,6 @@ import io.jsonwebtoken.security.Keys;
 
 import java.util.*;
 import javax.crypto.SecretKey;
-import org.eclipse.collections.api.set.ImmutableSet;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.jwt.BadJwtException;
@@ -59,8 +58,7 @@ public class JwtTokenClaimsCodec implements TokenClaimsCodecPort, JwtDecoder {
                         .issuedAt(Date.from(tokenClaims.creationTime()))
                         .expiration(Date.from(tokenClaims.expirationTime()))
                         .signWith(jwtSigningKey)
-                        .claims(Map.of("scope",
-                                RoleMapper.INSTANCE.fromValueObjects(tokenClaims.userPrincipal().roles())))
+                        .claims(Map.of("scope", tokenClaims.userPrincipal().role()))
                         .compact());
     }
 
@@ -116,37 +114,26 @@ public class JwtTokenClaimsCodec implements TokenClaimsCodecPort, JwtDecoder {
 
     private static UserPrincipal getUserPrincipal(final Jwt jwt) {
         String[] subjectFields = jwt.getSubject().split(",");
-        ImmutableSet<Role> roles = getRoles(jwt);
+        String role = getRole(jwt);
         return new UserPrincipal(
                 UUID.fromString(subjectFields[0]),
                 new Email(subjectFields[1]),
-                roles);
+                role);
     }
 
     private static String getSubject(final UserPrincipal userPrincipal) {
         return "%s,%s".formatted(userPrincipal.id(), userPrincipal.email().value());
     }
 
-    private static ImmutableSet<Role> getRoles(Jwt jwt) {
+    private static String getRole(Jwt jwt) {
         Object roleClaim = jwt.getClaim("scope");
         AccessToken token = new AccessToken(jwt.getTokenValue());
-        if (roleClaim == null) {
-            throw new AccessTokenDecodingException("missing claim 'scope'", token);
-        }
-        if (roleClaim instanceof List<?> roles) {
-            Optional<List<String>> strings = tryCastAsStrings(roles);
-            if (strings.isPresent()) {
-                return RoleMapper.INSTANCE.toValueObjects(strings.orElseThrow());
-            }
+
+        if (roleClaim instanceof String role) {
+            return role;
         }
         throw new AccessTokenDecodingException(
-                "claim 'scope' is not a list of string: " + roleClaim, token);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static Optional<List<String>> tryCastAsStrings(List<?> collection) {
-        boolean allStrings = collection.stream().allMatch(item -> item instanceof String);
-        return allStrings ? Optional.of((List<String>) collection) : Optional.empty();
+                new IllegalArgumentException("claim 'scope' is not a string: " + roleClaim), token);
     }
 
     private Jwt internalDecode(String token) {
