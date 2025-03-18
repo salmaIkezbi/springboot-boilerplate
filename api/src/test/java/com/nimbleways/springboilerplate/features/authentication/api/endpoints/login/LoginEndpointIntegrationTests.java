@@ -66,8 +66,8 @@ class LoginEndpointIntegrationTests extends BaseWebMvcIntegrationTests {
                 // THEN
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonIgnoreArrayOrder("""
-                        {"type":"about:blank","title":"errors.unauthorized","status":401,
-                        "detail":"errors.unauthorized","instance":"/auth/login"}"""));
+                        {"type":"about:blank","title":"errors.email_erronee_exists","status":401,
+                        "detail":"errors.email_erronee_exists","instance":"/auth/login"}"""));
     }
 
     private String urlEncodeLastCreatedToken() {
