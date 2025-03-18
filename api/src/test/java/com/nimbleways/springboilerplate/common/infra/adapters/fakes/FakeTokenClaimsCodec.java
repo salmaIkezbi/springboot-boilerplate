@@ -43,15 +43,13 @@ public class FakeTokenClaimsCodec implements TokenClaimsCodecPort, JwtDecoder {
 
     @SneakyThrows
     @Override
+    /* hna */
     public TokenClaims decodeWithoutExpirationValidation(AccessToken token) {
         ClaimWrapper claimWrapper;
         try {
             claimWrapper = objectMapper.readValue(token.value(), ClaimWrapper.class);
         } catch (MismatchedInputException | JsonParseException exception) {
             throw new AccessTokenDecodingException(exception, token);
-        }
-        if (claimWrapper.tokenClaims.userPrincipal().role() == null) {
-            throw new AccessTokenDecodingException("missing claim 'scope'", token);
         }
         return claimWrapper.tokenClaims();
     }

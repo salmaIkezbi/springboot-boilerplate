@@ -201,7 +201,7 @@ class GlobalExceptionHandlerIntegrationTests extends BaseWebMvcIntegrationTests 
                         HttpStatus.INTERNAL_SERVER_ERROR, internalServerErrorJsonResponse),
 
                 Arguments.of(
-                        new AccessTokenDecodingException("", new AccessToken("")),
+                        new AccessTokenDecodingException(new RuntimeException("Decoding error"), new AccessToken("")),
                         HttpStatus.UNAUTHORIZED, unauthorizedJsonResponse),
 
                 Arguments.of(
@@ -246,8 +246,5 @@ class GlobalExceptionHandlerIntegrationTests extends BaseWebMvcIntegrationTests 
             return Immutable.list.ofAll(eventQueue);
         }
 
-        public void clear() {
-            eventQueue.clear();
-        }
     }
 }
