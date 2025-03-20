@@ -3,7 +3,6 @@ package com.nimbleways.springboilerplate.testhelpers.fixtures;
 import com.nimbleways.springboilerplate.common.domain.ports.PasswordEncoderPort;
 import com.nimbleways.springboilerplate.common.domain.ports.TimeProviderPort;
 import com.nimbleways.springboilerplate.common.domain.valueobjects.Email;
-import com.nimbleways.springboilerplate.common.domain.valueobjects.Role;
 import com.nimbleways.springboilerplate.common.infra.adapters.fakes.FakePasswordEncoder;
 import com.nimbleways.springboilerplate.features.users.domain.valueobjects.NewUser;
 import com.nimbleways.springboilerplate.testhelpers.configurations.TimeTestConfiguration;

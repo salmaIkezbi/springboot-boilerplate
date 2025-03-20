@@ -1,7 +1,6 @@
 package com.nimbleways.springboilerplate.features.users.api.endpoints.signup;
 
 import com.nimbleways.springboilerplate.common.domain.valueobjects.Email;
-import com.nimbleways.springboilerplate.common.domain.valueobjects.Role;
 import com.nimbleways.springboilerplate.common.api.annotations.Parsable;
 import com.nimbleways.springboilerplate.common.infra.mappers.RoleMapper;
 import com.nimbleways.springboilerplate.features.users.domain.usecases.signup.SignupCommand;
