@@ -53,7 +53,7 @@ public class GlobalExceptionHandler extends BaseResponseEntityExceptionHandler {
     @Nullable
     public final ResponseEntity<Object> handleException(BadUserCredentialException ex,
                                                         WebRequest request) {
-        return getDefaultResponseEntity(ex, request, HttpStatus.UNAUTHORIZED, ApiErrorCodes.BAD_Credential_ERROR);
+        return getDefaultResponseEntity(ex, request, HttpStatus.UNAUTHORIZED, ApiErrorCodes.BAD_CREDENTIAL_ERROR);
     }
 
     @ExceptionHandler({ Exception.class })

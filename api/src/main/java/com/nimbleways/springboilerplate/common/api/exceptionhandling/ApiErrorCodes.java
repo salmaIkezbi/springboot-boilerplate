@@ -12,7 +12,7 @@ enum ApiErrorCodes {
     UNAUTHORIZED_ERROR("errors.unauthorized"),
     EMAIL_ALREADY_EXISTS_ERROR("errors.email_already_exists"),
     EMAIL_NOT_FOUND_ERROR("errors.email_erronee_exists"),
-    BAD_Credential_ERROR("errors.bad_password");
+    BAD_CREDENTIAL_ERROR("errors.bad_password");
 
     private final String code;
 
