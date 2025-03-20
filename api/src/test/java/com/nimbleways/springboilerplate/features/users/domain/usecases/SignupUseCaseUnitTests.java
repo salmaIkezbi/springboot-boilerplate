@@ -62,7 +62,7 @@ class SignupUseCaseUnitTests {
         sut.signup(signupCommand);
 
         // THEN
-        EncodedPassword encodedPassword = getPasswordFromRepository(signupCommand.email());
+        EncodedPassword encodedPassword = getPasswordFromRepository(signupCommand.email().value());
         boolean passwordMatches = sut.passwordEncoder()
                 .matches(signupCommand.plainPassword(), encodedPassword);
         assertTrue(passwordMatches);

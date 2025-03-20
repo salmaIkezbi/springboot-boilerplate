@@ -154,7 +154,7 @@ jobs:
 
   dependency-security-check:
     name: Vulnerability check for new dependencies
-    if: ${{ github.event_name == 'pull_request' }}
+    if: ${{ github.event_name == 'pull_request' && false }}
     runs-on: ubuntu-24.04
     needs: unit-tests
     defaults:

@@ -23,9 +23,9 @@ public class FakeUserRepository implements UserRepositoryPort, UserCredentialsRe
 
     @Override
     public User create(NewUser userToCreate) {
-        ensureUserDoesNotExist(userToCreate.email());
+        ensureUserDoesNotExist(userToCreate.email().value());
         User user = toUser(userToCreate);
-        fakeDb.userTable.put(user.email(), new FakeDatabase.UserWithPassword(user, userToCreate.encodedPassword()));
+        fakeDb.userTable.put(user.email().value(), new FakeDatabase.UserWithPassword(user, userToCreate.encodedPassword()));
         return user;
     }
 

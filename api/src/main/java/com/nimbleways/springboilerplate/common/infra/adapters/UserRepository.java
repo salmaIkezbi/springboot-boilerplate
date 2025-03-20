@@ -29,7 +29,7 @@ public class UserRepository implements UserRepositoryPort, UserCredentialsReposi
         try {
             savedUserDbEntity = jpaUserRepository.saveAndFlush(userDbEntity);
         } catch (DataIntegrityViolationException ex) {
-            throw new EmailAlreadyExistsInRepositoryException(userToCreate.email(), ex);
+            throw new EmailAlreadyExistsInRepositoryException(userToCreate.email().value(), ex);
         }
         return savedUserDbEntity.toUser();
     }

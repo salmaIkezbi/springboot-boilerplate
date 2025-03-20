@@ -4,6 +4,7 @@ import static org.checkerframework.checker.nullness.util.NullnessUtil.castNonNul
 
 import com.nimbleways.springboilerplate.common.domain.ports.RandomGeneratorPort;
 import com.nimbleways.springboilerplate.common.domain.ports.TimeProviderPort;
+import com.nimbleways.springboilerplate.common.domain.valueobjects.Email;
 import com.nimbleways.springboilerplate.common.domain.valueobjects.Role;
 import com.nimbleways.springboilerplate.common.infra.mappers.RoleMapper;
 import com.nimbleways.springboilerplate.common.infra.properties.JwtProperties;
@@ -19,11 +20,8 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+
+import java.util.*;
 import javax.crypto.SecretKey;
 import org.eclipse.collections.api.set.ImmutableSet;
 import org.jetbrains.annotations.NotNull;
@@ -121,12 +119,12 @@ public class JwtTokenClaimsCodec implements TokenClaimsCodecPort, JwtDecoder {
         ImmutableSet<Role> roles = getRoles(jwt);
         return new UserPrincipal(
                 UUID.fromString(subjectFields[0]),
-                subjectFields[1],
+                new Email(subjectFields[1]),
                 roles);
     }
 
     private static String getSubject(final UserPrincipal userPrincipal) {
-        return "%s,%s".formatted(userPrincipal.id(), userPrincipal.email());
+        return "%s,%s".formatted(userPrincipal.id(), userPrincipal.email().value());
     }
 
     private static ImmutableSet<Role> getRoles(Jwt jwt) {

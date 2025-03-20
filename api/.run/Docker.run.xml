@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Docker" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
     <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
-    <module name="springboot-boilerplate" />
+    <module name="springboilerplate" />
     <target name="maven:3-eclipse-temurin-16" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="com.nimbleways.springboilerplate.Application" />
     <option name="UPDATE_ACTION_UPDATE_POLICY" value="UpdateClassesAndResources" />

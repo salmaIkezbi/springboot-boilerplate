@@ -29,10 +29,8 @@ public abstract class UserRepositoryPortContractTests {
     @Test
     void creating_a_new_user_succeed() {
         NewUser newUser = aNewUser().build();
-
         userRepository.create(newUser);
-
-        NewUser newUserFromDb = reconstructNewUserFromDb(newUser.email());
+        NewUser newUserFromDb = reconstructNewUserFromDb(newUser.email().value());
         assertEquals(newUser, newUserFromDb);
     }
 
@@ -63,7 +61,7 @@ public abstract class UserRepositoryPortContractTests {
     }
 
     private NewUser reconstructNewUserFromDb(String email) {
-        User user = userRepository.findAll().detectOptional(u -> u.email().equals(email)).orElseThrow();
+        User user = userRepository.findAll().detectOptional(u -> u.email().value().equals(email)).orElseThrow();
         UserCredential userCredential = userCredentialsRepositoryPort
                 .findUserCredentialByEmail(email).orElseThrow();
         return new NewUser(

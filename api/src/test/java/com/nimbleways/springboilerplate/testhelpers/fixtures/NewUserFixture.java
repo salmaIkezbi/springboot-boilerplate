@@ -2,6 +2,7 @@ package com.nimbleways.springboilerplate.testhelpers.fixtures;
 
 import com.nimbleways.springboilerplate.common.domain.ports.PasswordEncoderPort;
 import com.nimbleways.springboilerplate.common.domain.ports.TimeProviderPort;
+import com.nimbleways.springboilerplate.common.domain.valueobjects.Email;
 import com.nimbleways.springboilerplate.common.domain.valueobjects.Role;
 import com.nimbleways.springboilerplate.common.infra.adapters.fakes.FakePasswordEncoder;
 import com.nimbleways.springboilerplate.common.utils.collections.Immutable;
@@ -38,7 +39,7 @@ public class NewUserFixture {
 
         return new NewUser(
                 nameValue,
-                emailValue,
+                new Email(emailValue),
                 passwordEncoderValue.encode(plainPasswordValue),
                 timeProviderValue.instant(),
                 rolesValue);

@@ -14,7 +14,7 @@ public record SignupResponse(
         return new SignupResponse(
                 user.id().toString(),
                 user.name(),
-                user.email(),
+                user.email().value(),
                 userRoles);
     }
 }

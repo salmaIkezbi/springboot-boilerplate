@@ -48,9 +48,7 @@ public abstract class TokenClaimsCodecPortContractTests {
     void decoding_a_valid_accesstoken_with_one_role_returns_the_initial_claim() {
         TokenClaims claims = getTokenClaims(Role.USER);
         AccessToken token = tokenCodec.encode(claims);
-
         TokenClaims decodedClaims = tokenCodec.decodeWithoutExpirationValidation(token);
-
         assertEquals(claims.userPrincipal(), decodedClaims.userPrincipal());
         assertEquals(adjustPrecision(claims.creationTime()), decodedClaims.creationTime());
         assertEquals(adjustPrecision(claims.expirationTime()), decodedClaims.expirationTime());

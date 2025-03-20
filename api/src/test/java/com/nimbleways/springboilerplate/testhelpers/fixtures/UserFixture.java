@@ -1,6 +1,7 @@
 package com.nimbleways.springboilerplate.testhelpers.fixtures;
 
 import com.nimbleways.springboilerplate.common.domain.ports.TimeProviderPort;
+import com.nimbleways.springboilerplate.common.domain.valueobjects.Email;
 import com.nimbleways.springboilerplate.common.domain.valueobjects.Role;
 import com.nimbleways.springboilerplate.common.utils.collections.Immutable;
 import com.nimbleways.springboilerplate.features.users.domain.entities.User;
@@ -34,7 +35,7 @@ public class UserFixture {
         return new User(
                 idValue,
                 nameValue,
-                emailValue,
+                new Email(emailValue),
                 timeProviderValue.instant(),
                 rolesValue);
     }

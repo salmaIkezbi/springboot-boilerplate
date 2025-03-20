@@ -28,6 +28,6 @@ public final class GetUsersResponse extends ArrayList<Item> {
         return new Item(
                 user.id().toString(),
                 user.name(),
-                user.email());
+                user.email().value());
     }
 }

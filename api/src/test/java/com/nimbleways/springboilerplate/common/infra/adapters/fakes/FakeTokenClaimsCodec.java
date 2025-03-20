@@ -76,7 +76,7 @@ public class FakeTokenClaimsCodec implements TokenClaimsCodecPort, JwtDecoder {
 
         UserPrincipal user = tokenClaims.userPrincipal();
         List<String> roles = Mutable.collectList(user.roles(), RoleMapper.INSTANCE::fromValueObject);
-        String subject = "%s,%s".formatted(user.id(), user.email());
+        String subject = "%s,%s".formatted(user.id(), user.email().value());
         return Jwt.withTokenValue(token)
                 .header("alg", "none")
                 .claim("scope", roles)

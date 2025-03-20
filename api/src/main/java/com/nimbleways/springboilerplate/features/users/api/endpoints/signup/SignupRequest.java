@@ -1,5 +1,6 @@
 package com.nimbleways.springboilerplate.features.users.api.endpoints.signup;
 
+import com.nimbleways.springboilerplate.common.domain.valueobjects.Email;
 import com.nimbleways.springboilerplate.common.domain.valueobjects.Role;
 import com.nimbleways.springboilerplate.common.api.annotations.Parsable;
 import com.nimbleways.springboilerplate.common.infra.mappers.RoleMapper;
@@ -16,6 +17,6 @@ public record SignupRequest(
         @NotNull ImmutableList<@Parsable(RoleMapper.class) String> roles) {
     public SignupCommand toSignupCommand() {
         ImmutableSet<Role> rolesAsEnum = RoleMapper.INSTANCE.toValueObjects(roles());
-        return new SignupCommand(name(), email(), password(), rolesAsEnum);
+        return new SignupCommand(name(), new Email(email()), password(), rolesAsEnum);
     }
 }

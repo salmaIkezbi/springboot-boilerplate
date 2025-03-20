@@ -33,7 +33,7 @@ public class UserSessionRepository implements UserSessionRepositoryPort {
         try {
             jpaUserSessionRepository.saveAndFlush(userSessionDbEntity);
         } catch (DataAccessException ex) {
-            throw new CannotCreateUserSessionInRepositoryException(userSession.userPrincipal().email(), ex);
+            throw new CannotCreateUserSessionInRepositoryException(userSession.userPrincipal().email().value(), ex);
         }
     }
 

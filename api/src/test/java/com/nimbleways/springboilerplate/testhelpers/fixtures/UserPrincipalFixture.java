@@ -1,5 +1,6 @@
 package com.nimbleways.springboilerplate.testhelpers.fixtures;
 
+import com.nimbleways.springboilerplate.common.domain.valueobjects.Email;
 import com.nimbleways.springboilerplate.common.domain.valueobjects.Role;
 import com.nimbleways.springboilerplate.common.utils.collections.Immutable;
 import com.nimbleways.springboilerplate.features.authentication.domain.entities.UserPrincipal;
@@ -26,7 +27,7 @@ public class UserPrincipalFixture {
 
         return new UserPrincipal(
                 idValue,
-                emailValue,
+                new Email(emailValue),
                 rolesValue);
     }
 }
