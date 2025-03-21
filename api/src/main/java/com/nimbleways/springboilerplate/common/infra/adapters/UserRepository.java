@@ -7,9 +7,12 @@ import com.nimbleways.springboilerplate.features.authentication.domain.entities.
 import com.nimbleways.springboilerplate.features.authentication.domain.ports.UserCredentialsRepositoryPort;
 import com.nimbleways.springboilerplate.features.users.domain.entities.User;
 import com.nimbleways.springboilerplate.features.users.domain.exceptions.EmailAlreadyExistsInRepositoryException;
+import com.nimbleways.springboilerplate.features.users.domain.exceptions.UserNotFoundInRepositoryException;
 import com.nimbleways.springboilerplate.features.users.domain.ports.UserRepositoryPort;
 import com.nimbleways.springboilerplate.features.users.domain.valueobjects.NewUser;
 import java.util.Optional;
+import java.util.UUID;
+
 import org.eclipse.collections.api.list.ImmutableList;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
@@ -37,6 +40,13 @@ public class UserRepository implements UserRepositoryPort, UserCredentialsReposi
     @Override
     public ImmutableList<User> findAll() {
         return Immutable.collectList(jpaUserRepository.findAll(), UserDbEntity::toUser);
+    }
+
+    @Override
+    public User findByID(UUID id) {
+
+        return  jpaUserRepository.findById(id).map(UserDbEntity::toUser)
+                .orElseThrow(() -> new UserNotFoundInRepositoryException(id.toString(),new IllegalArgumentException("User not found in the repository") ));
     }
 
     @Override
