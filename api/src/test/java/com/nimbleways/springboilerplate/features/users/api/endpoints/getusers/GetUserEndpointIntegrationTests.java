@@ -63,8 +63,8 @@ class GetUserEndpointIntegrationTests extends BaseWebMvcIntegrationTests {
 
                 // WHEN
                 mockMvc
-                                .perform(get(GET_USER_ENDPOINT, user.id())) // Passer l'ID de l'utilisateur dans l'URL
-                                .andExpect(status().isNotFound()); // Retourne 401 pour non-authentifié
+                                .perform(get(GET_USER_ENDPOINT, user.id()))
+                                .andExpect(status().isNotFound());
         }
 
         @Test

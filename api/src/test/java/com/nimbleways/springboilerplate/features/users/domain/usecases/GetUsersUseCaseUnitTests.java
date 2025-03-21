@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-
 @UnitTest
 class GetUserUseCaseUnitTests {
 
@@ -52,7 +51,5 @@ class GetUserUseCaseUnitTests {
         assertEquals("User with ID " + randomUuid.toString() + " not found", exception.getMessage());
 
     }
-
-
 
 }
