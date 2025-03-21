@@ -27,7 +27,8 @@ public class FakeUserRepository implements UserRepositoryPort, UserCredentialsRe
     public User create(NewUser userToCreate) {
         ensureUserDoesNotExist(userToCreate.email().value());
         User user = toUser(userToCreate);
-        fakeDb.userTable.put(user.email().value(), new FakeDatabase.UserWithPassword(user, userToCreate.encodedPassword()));
+        fakeDb.userTable.put(user.email().value(),
+                new FakeDatabase.UserWithPassword(user, userToCreate.encodedPassword()));
         return user;
     }
 
@@ -40,9 +41,13 @@ public class FakeUserRepository implements UserRepositoryPort, UserCredentialsRe
                 .findFirst()
                 .map(userWithPassword -> {
                     User existingUser = userWithPassword.user();
-                    User newUser = new User(existingUser.id(),existingUser.name(),existingUser.email(),existingUser.createdAt(),existingUser.role(),existingUser.employmentDate(),userToUpdate.shouldReceiveMailNotifications() , userToUpdate.shouldReceiveApprovalNotifications());
+                    User newUser = new User(existingUser.id(), existingUser.name(), existingUser.email(),
+                            existingUser.createdAt(), existingUser.role(), existingUser.employmentDate(),
+                            userToUpdate.shouldReceiveMailNotifications(),
+                            userToUpdate.shouldReceiveApprovalNotifications());
                     fakeDb.userTable.remove(existingUser.email().value());
-                    fakeDb.userTable.put(userWithPassword.user().email().value(), new FakeDatabase.UserWithPassword(newUser,userToUpdate.encodedPassword()));
+                    fakeDb.userTable.put(userWithPassword.user().email().value(),
+                            new FakeDatabase.UserWithPassword(newUser, userToUpdate.encodedPassword()));
                     return newUser;
                 })
                 .orElseThrow(() -> new UserNotFoundInRepositoryException(userToUpdate.id().toString(),
@@ -88,6 +93,5 @@ public class FakeUserRepository implements UserRepositoryPort, UserCredentialsRe
                     email, new DataIntegrityViolationException(""));
         }
     }
-
 
 }
