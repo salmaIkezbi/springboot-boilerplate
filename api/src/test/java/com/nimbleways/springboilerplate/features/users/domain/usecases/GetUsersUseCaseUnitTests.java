@@ -5,35 +5,35 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.nimbleways.springboilerplate.features.users.domain.entities.User;
 import com.nimbleways.springboilerplate.testhelpers.annotations.UnitTest;
-import com.nimbleways.springboilerplate.features.users.domain.usecases.suts.GetUsersSut;
-
-import com.nimbleways.springboilerplate.testhelpers.fixtures.NewUserFixture;
 import com.nimbleways.springboilerplate.testhelpers.utils.Instance;
-import org.eclipse.collections.api.list.ImmutableList;
+import com.nimbleways.springboilerplate.features.users.domain.usecases.suts.GetUserSut;
+import com.nimbleways.springboilerplate.testhelpers.fixtures.NewUserFixture;
 import org.junit.jupiter.api.Test;
 
+
 @UnitTest
-class GetUsersUseCaseUnitTests {
-    private final GetUsersSut sut = Instance.create(GetUsersSut.class);
+class GetUserUseCaseUnitTests {
+
+    private final GetUserSut sut = Instance.create(GetUserSut.class);
 
     @Test
-    void returns_existing_users_in_repository() {
+    void returns_existing_user_in_repository() {
         // GIVEN
-        NewUserFixture.UserData userData1 = new NewUserFixture.UserData.Builder()
+        NewUserFixture.UserData userData = new NewUserFixture.UserData.Builder()
                 .build();
-        NewUserFixture.UserData userData2 = new NewUserFixture.UserData.Builder()
-                .build();
-        User user1 = sut.userRepository().create(aNewUser()
-                .userData(userData1)
-                .build());
-        User user2 = sut.userRepository().create(aNewUser()
-                .userData(userData2)
+        User user = sut.userRepository().create(aNewUser()
+                .userData(userData)
                 .build());
 
         // WHEN
-        ImmutableList<User> usersInRepository = sut.getUsers();
-
+        User retrievedUser = sut.getUser(user.id());
         // THEN
-        assertThat(usersInRepository).containsExactlyInAnyOrder(user1, user2);
+        assertThat(retrievedUser).isNotNull();
+        assertThat(retrievedUser.id()).isEqualTo(user.id());
+        assertThat(retrievedUser.name()).isEqualTo(user.name());
+        assertThat(retrievedUser.email().value()).isEqualTo(user.email().value());
     }
+
+
+
 }
