@@ -16,7 +16,6 @@ import org.springframework.context.annotation.Import;
 
 import java.util.UUID;
 
-
 @WebMvcTest(controllers = GetUserEndpoint.class)
 @Import(GetUserSut.class)
 class GetUserEndpointIntegrationTests extends BaseWebMvcIntegrationTests {
@@ -32,12 +31,12 @@ class GetUserEndpointIntegrationTests extends BaseWebMvcIntegrationTests {
 
                 // WHEN & THEN
                 mockMvc
-                        .perform(get(GET_USER_ENDPOINT + user.id().toString())
-                                .cookie(getAccessTokenCookie(user)))
-                        .andExpect(status().isOk())
-                        .andExpect(jsonIgnoreArrayOrder("""
-            {"id":"%s","email":"user","name":"user"}"""
-                                .formatted(user.id().toString())));
+                                .perform(get(GET_USER_ENDPOINT + user.id().toString())
+                                                .cookie(getAccessTokenCookie(user)))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonIgnoreArrayOrder("""
+                                                {"id":"%s","email":"user","name":"user"}"""
+                                                .formatted(user.id().toString())));
         }
 
         @Test
@@ -52,8 +51,8 @@ class GetUserEndpointIntegrationTests extends BaseWebMvcIntegrationTests {
                                 // THEN
                                 .andExpect(status().isOk())
                                 .andExpect(jsonIgnoreArrayOrder("""
-                    {"id":"%s","email":"user1","name":"user1"}"""
-                                        .formatted(user.id().toString())));
+                                                {"id":"%s","email":"user1","name":"user1"}"""
+                                                .formatted(user.id().toString())));
 
         }
 
@@ -64,8 +63,8 @@ class GetUserEndpointIntegrationTests extends BaseWebMvcIntegrationTests {
 
                 // WHEN
                 mockMvc
-                        .perform(get(GET_USER_ENDPOINT, user.id())) // Passer l'ID de l'utilisateur dans l'URL
-                        .andExpect(status().isNotFound()); // Retourne 401 pour non-authentifié
+                                .perform(get(GET_USER_ENDPOINT, user.id())) // Passer l'ID de l'utilisateur dans l'URL
+                                .andExpect(status().isNotFound()); // Retourne 401 pour non-authentifié
         }
 
         @Test
@@ -76,9 +75,9 @@ class GetUserEndpointIntegrationTests extends BaseWebMvcIntegrationTests {
 
                 // WHEN
                 mockMvc
-                        .perform(get(GET_USER_ENDPOINT + user.id().toString())
-                                .cookie(getAccessTokenCookie(admin)))
-                        .andExpect(status().isForbidden());
+                                .perform(get(GET_USER_ENDPOINT + user.id().toString())
+                                                .cookie(getAccessTokenCookie(admin)))
+                                .andExpect(status().isForbidden());
         }
 
         @Test
@@ -89,9 +88,10 @@ class GetUserEndpointIntegrationTests extends BaseWebMvcIntegrationTests {
 
                 // WHEN & THEN
                 mockMvc
-                        .perform(get(GET_USER_ENDPOINT + nonExistentUserId.toString())
-                                .cookie(getAccessTokenCookie(user)))
-                        .andExpect(status().isNotFound()); }
+                                .perform(get(GET_USER_ENDPOINT + nonExistentUserId.toString())
+                                                .cookie(getAccessTokenCookie(user)))
+                                .andExpect(status().isNotFound());
+        }
 
         @Test
         void getting_user_with_null_id_returns_not_found() throws Exception {
@@ -100,15 +100,17 @@ class GetUserEndpointIntegrationTests extends BaseWebMvcIntegrationTests {
 
                 // WHEN & THEN
                 mockMvc
-                        .perform(get(GET_USER_ENDPOINT )
-                                .cookie(getAccessTokenCookie(user)))
-                        .andExpect(status().isNotFound()); }
+                                .perform(get(GET_USER_ENDPOINT)
+                                                .cookie(getAccessTokenCookie(user)))
+                                .andExpect(status().isNotFound());
+        }
 
         private User createUserInRepo(String name, String email, String role) {
-        return getUserSut.userRepository().create(
-                aNewUser()
-                        .userData(new NewUserFixture.UserData.Builder().name(name).email(email).role(role).build())
-                        .build());
-    }
+                return getUserSut.userRepository().create(
+                                aNewUser()
+                                                .userData(new NewUserFixture.UserData.Builder().name(name).email(email)
+                                                                .role(role).build())
+                                                .build());
+        }
 
 }
