@@ -8,6 +8,7 @@ import com.nimbleways.springboilerplate.features.users.domain.exceptions.EmailAl
 import com.nimbleways.springboilerplate.features.users.domain.exceptions.UserNotFoundInRepositoryException;
 import com.nimbleways.springboilerplate.features.users.domain.valueobjects.NewUser;
 import com.nimbleways.springboilerplate.features.users.domain.valueobjects.NewUserBuilder;
+import com.nimbleways.springboilerplate.features.users.domain.valueobjects.UpdatedUser;
 import com.nimbleways.springboilerplate.testhelpers.fixtures.NewUserFixture;
 import jakarta.transaction.Transactional;
 import java.util.List;
@@ -128,7 +129,52 @@ public abstract class UserRepositoryPortContractTests {
     }
 
 
+    @Test
+    void updating_and_getting_user_with_random_uuid() {
+        // GIVEN : Création d'un nouvel utilisateur avec un UUID aléatoire
+        NewUserFixture.UserData userData = new NewUserFixture.UserData.Builder()
+                .email("email")
+                .build();
+        NewUser newUser = aNewUser().userData(userData)
+                .build();
+        // Création de l'utilisateur dans le repository
+        userRepository.create(newUser);
 
+        UUID randomUuid = UUID.randomUUID();
+
+
+        UpdatedUser updatedUser = new UpdatedUser(randomUuid,newUser.encodedPassword(),true,true);
+
+
+        Exception exception = assertThrows(Exception.class,
+                () -> userRepository.update(updatedUser));
+
+        assertEquals(UserNotFoundInRepositoryException.class, exception.getClass());
+    }
+
+    @Test
+    void updating_and_getting_user_with_uuid() {
+        // GIVEN : Création d'un nouvel utilisateur avec un UUID aléatoire
+        NewUserFixture.UserData userData = new NewUserFixture.UserData.Builder()
+                .email("email")
+                .build();
+        NewUser newUser = aNewUser().userData(userData)
+                .build();
+
+        // Création de l'utilisateur dans le repository
+        User createdUser = userRepository.create(newUser);
+
+
+        UpdatedUser updatedUser = new UpdatedUser(createdUser.id(),newUser.encodedPassword(),true,true);
+
+
+        User retrievedUser = userRepository.update(updatedUser);
+
+
+        assertNotNull(retrievedUser);
+        assertEquals(retrievedUser.shouldReceiveMailNotifications(), updatedUser.shouldReceiveMailNotifications());
+        assertEquals(retrievedUser.shouldReceiveApprovalNotifications(), updatedUser.shouldReceiveApprovalNotifications());
+    }
 
     // --------------------------------- Protected Methods
     // ------------------------------- //
