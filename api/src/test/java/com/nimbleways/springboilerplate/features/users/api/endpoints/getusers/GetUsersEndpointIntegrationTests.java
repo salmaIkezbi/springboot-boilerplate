@@ -5,11 +5,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.nimbleways.springboilerplate.common.domain.valueobjects.Role;
-import com.nimbleways.springboilerplate.common.utils.collections.Immutable;
 import com.nimbleways.springboilerplate.features.users.domain.entities.User;
 import com.nimbleways.springboilerplate.testhelpers.baseclasses.BaseWebMvcIntegrationTests;
 import com.nimbleways.springboilerplate.features.users.domain.usecases.suts.GetUsersSut;
-import org.eclipse.collections.api.set.ImmutableSet;
+import com.nimbleways.springboilerplate.testhelpers.fixtures.NewUserFixture;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -26,7 +25,7 @@ class GetUsersEndpointIntegrationTests extends BaseWebMvcIntegrationTests {
         @Test
         void getting_users_with_admin_user_and_a_single_user_in_repository_returns_that_user() throws Exception {
                 // GIVEN
-                User admin = createUserInRepo("admin", "admin", Immutable.set.of(Role.ADMIN));
+                User admin = createUserInRepo("admin", "admin", String.valueOf(Role.ADMIN));
 
                 // WHEN
                 mockMvc
@@ -43,7 +42,7 @@ class GetUsersEndpointIntegrationTests extends BaseWebMvcIntegrationTests {
         @Test
         void getting_users_with_non_admin_user_returns_403() throws Exception {
                 // GIVEN
-                User user = createUserInRepo("user1", "user1", Immutable.set.of(Role.USER));
+                User user = createUserInRepo("user1", "user1", String.valueOf(Role.USER));
 
                 // WHEN
                 mockMvc
@@ -60,8 +59,8 @@ class GetUsersEndpointIntegrationTests extends BaseWebMvcIntegrationTests {
         @Test
         void getting_users_with_admin_user_and_two_users_in_repository_returns_both_users() throws Exception {
                 // GIVEN
-                User user1 = createUserInRepo("user1", "email1", Immutable.set.of(Role.ADMIN));
-                User user2 = createUserInRepo("user2", "email2", Immutable.set.of());
+                User user1 = createUserInRepo("user1", "email1", String.valueOf(Role.ADMIN));
+                User user2 = createUserInRepo("user2", "email2", String.valueOf(Role.USER));
 
                 // WHEN
                 mockMvc
@@ -86,12 +85,11 @@ class GetUsersEndpointIntegrationTests extends BaseWebMvcIntegrationTests {
                                 .andExpect(status().isUnauthorized());
         }
 
-        private User createUserInRepo(String name, String email, ImmutableSet<Role> roles) {
-                return getUsersSut.userRepository().create(
-                                aNewUser()
-                                                .name(name)
-                                                .email(email)
-                                                .roles(roles)
-                                                .build());
-        }
+    private User createUserInRepo(String name, String email, String role) {
+        return getUsersSut.userRepository().create(
+                aNewUser()
+                        .userData(new NewUserFixture.UserData.Builder().name(name).email(email).role(role).build())
+                        .build());
+    }
+
 }

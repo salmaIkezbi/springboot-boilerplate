@@ -28,13 +28,13 @@ class SignupEndpointIntegrationTests extends BaseWebMvcIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                     {"name":"Name", "email":"Email",
-                    "password":"password", "roles":["ADMIN"]}""")
+                    "password":"password", "role":"ADMIN","employmentDate":"2025-03-17"}""")
             )
 
         // THEN
             .andExpect(status().isCreated())
             .andExpect(jsonIgnoreArrayOrder("""
-                    {"id":"%s","name":"Name","email":"Email","roles":["ADMIN"]}"""
+                    {"id":"%s","name":"Name","email":"Email","role":"ADMIN","employmentDate":"2025-03-17"}"""
                     .formatted(getUserId().toString())
             ));
     }

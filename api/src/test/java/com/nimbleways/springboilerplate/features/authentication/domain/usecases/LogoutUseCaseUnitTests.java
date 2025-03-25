@@ -11,6 +11,7 @@ import com.nimbleways.springboilerplate.features.authentication.domain.exception
 import com.nimbleways.springboilerplate.features.users.domain.entities.User;
 import com.nimbleways.springboilerplate.testhelpers.annotations.UnitTest;
 import com.nimbleways.springboilerplate.features.authentication.domain.usecases.suts.LogoutSut;
+import com.nimbleways.springboilerplate.testhelpers.fixtures.NewUserFixture;
 import com.nimbleways.springboilerplate.testhelpers.utils.Instance;
 import jakarta.validation.constraints.NotNull;
 import org.junit.jupiter.api.Test;
@@ -53,7 +54,11 @@ class LogoutUseCaseUnitTests {
 
     @NotNull
     private UserSession createUserSession() {
-        User user = sut.userRepository().create(aNewUser().build());
+        NewUserFixture.UserData userData = new NewUserFixture.UserData.Builder()
+                .build();
+        User user = sut.userRepository().create(aNewUser()
+                .userData(userData)
+                .build());
         return new UserSession(
             aRefreshToken(),
             sut.timeProvider().instant().plusSeconds(5),

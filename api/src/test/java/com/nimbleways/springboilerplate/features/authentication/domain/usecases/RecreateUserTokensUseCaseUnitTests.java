@@ -15,6 +15,7 @@ import com.nimbleways.springboilerplate.features.authentication.domain.valueobje
 import com.nimbleways.springboilerplate.features.users.domain.entities.User;
 import com.nimbleways.springboilerplate.testhelpers.annotations.UnitTest;
 import com.nimbleways.springboilerplate.features.authentication.domain.usecases.suts.RecreateUserTokensSut;
+import com.nimbleways.springboilerplate.testhelpers.fixtures.NewUserFixture;
 import com.nimbleways.springboilerplate.testhelpers.utils.Instance;
 import org.junit.jupiter.api.Test;
 
@@ -30,6 +31,7 @@ class RecreateUserTokensUseCaseUnitTests {
 
         // WHEN
         UserTokens newUserTokens = sut.recreateUserTokens(new RecreateUserTokensCommand(oldUserTokens));
+
 
         // THEN
         assertNotEquals(oldUserTokens.accessToken(), newUserTokens.accessToken());
@@ -57,8 +59,16 @@ class RecreateUserTokensUseCaseUnitTests {
     @Test
     void recreating_tokens_with_accessToken_and_refreshToken_belonging_to_different_users_throws_RefreshAndAccessTokensMismatchException() {
         // GIVEN
-        User user1 = sut.userRepository().create(aNewUser().build());
-        User user2 = sut.userRepository().create(aNewUser().build());
+        NewUserFixture.UserData userData1 = new NewUserFixture.UserData.Builder()
+                .build();
+        User user1 = sut.userRepository().create(aNewUser()
+                .userData(userData1)
+                .build());
+        NewUserFixture.UserData userData2 = new NewUserFixture.UserData.Builder()
+                .build();
+        User user2 = sut.userRepository().create(aNewUser()
+                .userData(userData2)
+                .build());
         UserTokens user1Tokens = sut.createUserSessionAndTokens(user1).userTokens();
         UserSession sessionWithUser1RefreshTokenAndUser2Principal = new UserSession(
             user1Tokens.refreshToken(),
@@ -79,7 +89,11 @@ class RecreateUserTokensUseCaseUnitTests {
     }
 
     private UserTokens createUserTokens() {
-        User user = sut.userRepository().create(aNewUser().build());
+        NewUserFixture.UserData userData = new NewUserFixture.UserData.Builder()
+                .build();
+        User user = sut.userRepository().create(aNewUser()
+                .userData(userData)
+                .build());
         return sut.createUserSessionAndTokens(user).userTokens();
     }
 }

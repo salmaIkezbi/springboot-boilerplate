@@ -11,7 +11,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.nimbleways.springboilerplate.common.domain.ports.TimeProviderPort;
 import com.nimbleways.springboilerplate.common.domain.valueobjects.Role;
-import com.nimbleways.springboilerplate.common.utils.collections.Immutable;
 import com.nimbleways.springboilerplate.features.authentication.domain.entities.TokenClaims;
 import com.nimbleways.springboilerplate.features.authentication.domain.entities.UserPrincipal;
 import com.nimbleways.springboilerplate.features.authentication.domain.ports.TokenClaimsCodecPort;
@@ -35,7 +34,7 @@ class WebSecurityIntegrationTests extends BaseWebMvcIntegrationTests {
     @Test
     void post_on_permit_all_endpoint_with_expired_token_returns_200() throws Exception {
         //GIVEN
-        AccessToken expiredAccessToken = getExpiredAccessToken(getUserPrincipal(Role.USER));
+        AccessToken expiredAccessToken = getExpiredAccessToken(getUserPrincipal(String.valueOf(Role.USER)));
 
         // WHEN
         mockMvc
@@ -49,7 +48,7 @@ class WebSecurityIntegrationTests extends BaseWebMvcIntegrationTests {
 
     @Test
     void post_on_admin_only_endpoint_with_admin_token_returns_200() throws Exception {
-        UserPrincipal adminPrincipal = getUserPrincipal(Role.ADMIN);
+        UserPrincipal adminPrincipal = getUserPrincipal(String.valueOf(Role.ADMIN));
 
         // WHEN
         mockMvc
@@ -63,7 +62,7 @@ class WebSecurityIntegrationTests extends BaseWebMvcIntegrationTests {
 
     @Test
     void post_on_admin_only_endpoint_with_non_admin_token_returns_403() throws Exception {
-        UserPrincipal userPrincipal = getUserPrincipal(Role.USER);
+        UserPrincipal userPrincipal = getUserPrincipal(String.valueOf(Role.USER));
 
         // WHEN
         mockMvc
@@ -94,7 +93,7 @@ class WebSecurityIntegrationTests extends BaseWebMvcIntegrationTests {
     @Test
     void post_on_admin_only_endpoint_with_expired_token_returns_401() throws Exception {
         //GIVEN
-        AccessToken expiredAccessToken = getExpiredAccessToken(getUserPrincipal(Role.ADMIN));
+        AccessToken expiredAccessToken = getExpiredAccessToken(getUserPrincipal(String.valueOf(Role.ADMIN)));
 
         // WHEN
         mockMvc
@@ -145,8 +144,8 @@ class WebSecurityIntegrationTests extends BaseWebMvcIntegrationTests {
                 .andExpect(content().string(""));
     }
 
-    private static UserPrincipal getUserPrincipal(Role role) {
-        return aUserPrincipal().roles(Immutable.set.of(role)).build();
+    private static UserPrincipal getUserPrincipal(String role) {
+        return aUserPrincipal().role(role).build();
     }
 
     private AccessToken getExpiredAccessToken(@NotNull UserPrincipal userPrincipal) {

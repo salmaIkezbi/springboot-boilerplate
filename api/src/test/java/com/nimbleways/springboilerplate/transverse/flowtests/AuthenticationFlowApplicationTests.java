@@ -20,7 +20,7 @@ class AuthenticationFlowApplicationTests extends BaseApplicationTestsWithDb {
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue("""
                         {"name":"Name", "email":"admin1",
-                        "password":"password1", "roles":["ADMIN"]}""")
+                        "password":"password1", "role":"ADMIN","employmentDate":"2025-03-17"}""")
                 .exchange()
                 .expectStatus().isCreated()
                 .expectBody().jsonPath("$.email").isEqualTo("admin1");

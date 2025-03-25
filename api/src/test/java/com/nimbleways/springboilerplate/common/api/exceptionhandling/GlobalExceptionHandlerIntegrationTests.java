@@ -185,6 +185,14 @@ class GlobalExceptionHandlerIntegrationTests extends BaseWebMvcIntegrationTests 
                 {"type":"about:blank","title":"errors.unauthorized","status":401,
                 "detail":"errors.unauthorized","instance":"/exception-handling/throw"}""";
 
+        final String badEmailJsonResponse = """
+                {"type":"about:blank","title":"errors.email_erronee_exists","status":401,
+                "detail":"errors.email_erronee_exists","instance":"/exception-handling/throw"}""";
+
+        final String badUserCredentialJsonResponse = """
+                {"type":"about:blank","title":"errors.bad_password","status":401,
+                "detail":"errors.bad_password","instance":"/exception-handling/throw"}""";
+
         final String internalServerErrorJsonResponse = """
                 {"type":"about:blank","title":"errors.internal_server_error","status":500,
                 "detail":"errors.internal_server_error","instance":"/exception-handling/throw"}""";
@@ -201,12 +209,12 @@ class GlobalExceptionHandlerIntegrationTests extends BaseWebMvcIntegrationTests 
                         HttpStatus.INTERNAL_SERVER_ERROR, internalServerErrorJsonResponse),
 
                 Arguments.of(
-                        new AccessTokenDecodingException("", new AccessToken("")),
+                        new AccessTokenDecodingException(new RuntimeException("Decoding error"), new AccessToken("")),
                         HttpStatus.UNAUTHORIZED, unauthorizedJsonResponse),
 
                 Arguments.of(
                         new BadUserCredentialException(""),
-                        HttpStatus.UNAUTHORIZED, unauthorizedJsonResponse),
+                        HttpStatus.UNAUTHORIZED, badUserCredentialJsonResponse),
 
                 Arguments.of(
                         new EmailAlreadyExistsInRepositoryException(
@@ -225,7 +233,7 @@ class GlobalExceptionHandlerIntegrationTests extends BaseWebMvcIntegrationTests 
 
                 Arguments.of(
                         new UnknownEmailException(""),
-                        HttpStatus.UNAUTHORIZED, unauthorizedJsonResponse),
+                        HttpStatus.UNAUTHORIZED, badEmailJsonResponse),
 
                 Arguments.of(
                         new CannotCreateUserSessionInRepositoryException(
@@ -246,8 +254,5 @@ class GlobalExceptionHandlerIntegrationTests extends BaseWebMvcIntegrationTests 
             return Immutable.list.ofAll(eventQueue);
         }
 
-        public void clear() {
-            eventQueue.clear();
-        }
     }
 }

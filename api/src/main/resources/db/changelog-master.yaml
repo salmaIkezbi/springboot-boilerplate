@@ -21,3 +21,9 @@ databaseChangeLog:
   - include:
       file: changelog/20250313-122708-add-email.yaml
       relativeToChangelogFile: true
+  - include:
+      file: changelog/20250317-140725-replace-roles-collections-with-role-string.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changelog/20250317-143507-add-column-employmentdate.yaml
+      relativeToChangelogFile: true
