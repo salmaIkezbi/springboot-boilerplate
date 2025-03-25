@@ -39,6 +39,17 @@ public class UserRepository implements UserRepositoryPort, UserCredentialsReposi
     }
 
     @Override
+    public User update(UpdatedUser userToUpdate) {
+        return jpaUserRepository.findById(userToUpdate.id())
+                .map(existingUser -> {existingUser.password(userToUpdate.encodedPassword().value());
+                    existingUser.shouldReceiveMailNotifications(userToUpdate.shouldReceiveMailNotifications());
+                    existingUser.shouldReceiveApprovalNotifications(userToUpdate.shouldReceiveApprovalNotifications());
+                    return jpaUserRepository.save(existingUser);
+                })
+                .orElseThrow(() -> new UserNotFoundInRepositoryException(userToUpdate.id().toString(), new IllegalArgumentException("bad user id "))).toUser();
+    }
+
+    @Override
     public ImmutableList<User> findAll() {
         return Immutable.collectList(jpaUserRepository.findAll(), UserDbEntity::toUser);
     }
