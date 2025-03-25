@@ -82,7 +82,9 @@ class SignupUseCaseUnitTests {
                 signupCommand.email(),
                 sut.timeProvider().instant(),
                 signupCommand.role(),
-                signupCommand.employmentDate());
+                signupCommand.employmentDate(),
+                false,
+                false);
     }
 
     private static SignupCommand createSignupCommand() {

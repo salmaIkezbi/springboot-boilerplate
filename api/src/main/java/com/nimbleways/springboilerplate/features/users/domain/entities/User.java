@@ -11,5 +11,7 @@ public record User(
                 Email email,
                 Instant createdAt,
                 String role,
-                LocalDate employmentDate) {
+                LocalDate employmentDate,
+                Boolean shouldReceiveMailNotifications,
+                Boolean shouldReceiveApprovalNotifications ) {
 }
