@@ -28,12 +28,11 @@ public class FakeUserSessionRepository implements UserSessionRepositoryPort {
 
     @Override
     public Optional<UserSession> findByRefreshTokenAndExpirationDateAfter(
-        RefreshToken refreshToken,
-        Instant now
-    ) {
+            RefreshToken refreshToken,
+            Instant now) {
         return Optional
-            .ofNullable(fakeDb.sessionTable.get(refreshToken))
-            .filter(us -> us.expirationDate().isAfter(now) || us.expirationDate().equals(now));
+                .ofNullable(fakeDb.sessionTable.get(refreshToken))
+                .filter(us -> us.expirationDate().isAfter(now) || us.expirationDate().equals(now));
     }
 
     @Override
@@ -47,12 +46,12 @@ public class FakeUserSessionRepository implements UserSessionRepositoryPort {
     @Override
     public void deleteUserSessionByExpirationDateBefore(Instant instant) {
         fakeDb.sessionTable
-            .values()
-            .stream()
-            .filter(us -> us.expirationDate().isBefore(instant))
-            .map(UserSession::refreshToken)
-            .toList() // necessary to avoid ConcurrentModificationException
-            .forEach(fakeDb.sessionTable::remove);
+                .values()
+                .stream()
+                .filter(us -> us.expirationDate().isBefore(instant))
+                .map(UserSession::refreshToken)
+                .toList() // necessary to avoid ConcurrentModificationException
+                .forEach(fakeDb.sessionTable::remove);
     }
 
     public ImmutableList<UserSession> findAll() {
@@ -63,22 +62,20 @@ public class FakeUserSessionRepository implements UserSessionRepositoryPort {
         UUID userId = userSession.userPrincipal().id();
         if (!fakeDb.userTable.anySatisfy(u -> u.user().id().equals(userId))) {
             throw new CannotCreateUserSessionInRepositoryException(
-                    userSession.userPrincipal().username(),
+                    userSession.userPrincipal().email().value(),
                     new DataIntegrityViolationException(
                             "User ID '%s' not found in repository".formatted(
-                                    userId)
-                    ));
+                                    userId)));
         }
     }
 
     private void ensureSessionDoesNotExist(UserSession userSession) {
         if (fakeDb.sessionTable.containsKey(userSession.refreshToken())) {
             throw new CannotCreateUserSessionInRepositoryException(
-                    userSession.userPrincipal().username(),
+                    userSession.userPrincipal().email().value(),
                     new DataIntegrityViolationException(
                             "RefreshToken '%s' already exist in repository".formatted(
-                                    userSession.refreshToken().value())
-                    ));
+                                    userSession.refreshToken().value())));
         }
     }
 }

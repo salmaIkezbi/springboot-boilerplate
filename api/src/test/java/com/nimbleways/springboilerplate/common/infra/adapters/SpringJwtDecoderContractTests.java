@@ -90,20 +90,19 @@ public abstract class SpringJwtDecoderContractTests {
     }
 
     private String getExpectedSubject(UserPrincipal userPrincipal) {
-        return "%s,%s".formatted(userPrincipal.id(), userPrincipal.username().value());
+        return "%s,%s".formatted(userPrincipal.id(), userPrincipal.email().value());
     }
 
     @NotNull
-    private TokenClaims getTokenClaims(Instant expirationTime, Role ...roles) {
+    private TokenClaims getTokenClaims(Instant expirationTime, Role... roles) {
         return new TokenClaims(
-            aUserPrincipal().roles(Immutable.set.of(roles)).build(),
-            expirationTime.minusSeconds(1),
-            expirationTime
-        );
+                aUserPrincipal().roles(Immutable.set.of(roles)).build(),
+                expirationTime.minusSeconds(1),
+                expirationTime);
     }
 
-
-    // --------------------------------- Protected Methods ------------------------------- //
+    // --------------------------------- Protected Methods
+    // ------------------------------- //
     protected abstract JwtDecoder getInstance();
 
     protected abstract String encode(TokenClaims claims);

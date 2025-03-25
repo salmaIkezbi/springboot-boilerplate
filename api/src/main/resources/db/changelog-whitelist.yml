@@ -2,5 +2,8 @@
 whitelisted_files:
   - file: "changelog/20211013125551-create-user-table.yaml"
     explanation: "Example file to ignore"
+  - file: "changelog/20250313-122708-add-email.yaml"
+    explanation: "Destructive query related to email column update"
+
 
 

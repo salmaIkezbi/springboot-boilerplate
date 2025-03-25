@@ -27,26 +27,24 @@ class LoginEndpointIntegrationTests extends BaseWebMvcIntegrationTests {
     void returns_AccessToken_and_RefreshToken_in_cookies() throws Exception {
         // GIVEN
         loginSut.userRepository().create(
-            aNewUser()
-                .username("usernameCreated")
-                .plainPassword("passwordCreated")
-                .build()
-        );
+                aNewUser()
+                        .email("emailCreated")
+                        .plainPassword("passwordCreated")
+                        .build());
 
         // WHEN
         mockMvc
-            .perform(
-                post(LOGIN_ENDPOINT)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content("""
-                        {"username":"usernameCreated", "password":"passwordCreated"}""")
-            )
+                .perform(
+                        post(LOGIN_ENDPOINT)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                        {"email":"emailCreated", "password":"passwordCreated"}"""))
 
-        // THEN
-            .andExpect(status().isOk())
-            .andExpect(cookie().value("accessToken", urlEncodeLastCreatedToken()))
-            .andExpect(cookie().value("refreshToken", urlEncode("cfcd2084-95d5-35ef-a6e7-dff9f98764da")))
-            .andExpect(content().string(""));
+                // THEN
+                .andExpect(status().isOk())
+                .andExpect(cookie().value("accessToken", urlEncodeLastCreatedToken()))
+                .andExpect(cookie().value("refreshToken", urlEncode("cfcd2084-95d5-35ef-a6e7-dff9f98764da")))
+                .andExpect(content().string(""));
     }
 
     @Test
@@ -55,18 +53,17 @@ class LoginEndpointIntegrationTests extends BaseWebMvcIntegrationTests {
 
         // WHEN
         mockMvc
-            .perform(
-                post(LOGIN_ENDPOINT)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content("""
-                        {"username":"non_existing_user", "password":"any_password"}""")
-            )
+                .perform(
+                        post(LOGIN_ENDPOINT)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                        {"email":"non_existing_user", "password":"any_password"}"""))
 
-        // THEN
-            .andExpect(status().isUnauthorized())
-            .andExpect(jsonIgnoreArrayOrder("""
-                    {"type":"about:blank","title":"errors.unauthorized","status":401,
-                    "detail":"errors.unauthorized","instance":"/auth/login"}"""));
+                // THEN
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonIgnoreArrayOrder("""
+                        {"type":"about:blank","title":"errors.unauthorized","status":401,
+                        "detail":"errors.unauthorized","instance":"/auth/login"}"""));
     }
 
     private String urlEncodeLastCreatedToken() {

@@ -7,14 +7,14 @@ import org.eclipse.collections.api.list.ImmutableList;
 
 public final class GetUsersResponse extends ArrayList<Item> {
     public record Item(
-        String id,
-        String name,
-        String username
-    ) {}
+            String id,
+            String name,
+            String email) {
+    }
 
     public static GetUsersResponse from(ImmutableList<User> users) {
         GetUsersResponse getUsersResponse = new GetUsersResponse(users.size());
-        for (User user: users) {
+        for (User user : users) {
             getUsersResponse.add(from(user));
         }
         return getUsersResponse;
@@ -26,9 +26,8 @@ public final class GetUsersResponse extends ArrayList<Item> {
 
     private static Item from(User user) {
         return new Item(
-            user.id().toString(),
-            user.name(),
-            user.username().value()
-        );
+                user.id().toString(),
+                user.name(),
+                user.email().value());
     }
 }

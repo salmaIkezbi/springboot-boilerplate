@@ -19,18 +19,18 @@ class AuthenticationFlowApplicationTests extends BaseApplicationTestsWithDb {
                 .post().uri("/auth/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue("""
-                        {"name":"Name", "username":"admin1",
+                        {"name":"Name", "email":"admin1",
                         "password":"password1", "roles":["ADMIN"]}""")
                 .exchange()
                 .expectStatus().isCreated()
-                .expectBody().jsonPath("$.username").isEqualTo("admin1");
+                .expectBody().jsonPath("$.email").isEqualTo("admin1");
 
         // ----------- login ------------//
         webTestClient
                 .post().uri("/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue("""
-                        {"username":"admin1", "password":"password1"}""")
+                        {"email":"admin1", "password":"password1"}""")
                 .exchange()
                 .expectStatus().isOk();
 
@@ -39,7 +39,7 @@ class AuthenticationFlowApplicationTests extends BaseApplicationTestsWithDb {
                 .get().uri("/users")
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody().jsonPath("$[0].username").isEqualTo("admin1");
+                .expectBody().jsonPath("$[0].email").isEqualTo("admin1");
 
         // ----------- refresh token ------------//
         webTestClient

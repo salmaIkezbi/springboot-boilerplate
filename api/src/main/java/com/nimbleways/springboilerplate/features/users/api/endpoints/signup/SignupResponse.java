@@ -5,18 +5,16 @@ import com.nimbleways.springboilerplate.features.users.domain.entities.User;
 import org.eclipse.collections.api.set.ImmutableSet;
 
 public record SignupResponse(
-    String id,
-    String name,
-    String username,
-    ImmutableSet<String> roles
-) {
+        String id,
+        String name,
+        String email,
+        ImmutableSet<String> roles) {
     public static SignupResponse from(User user) {
         ImmutableSet<String> userRoles = RoleMapper.INSTANCE.fromValueObjects(user.roles());
         return new SignupResponse(
                 user.id().toString(),
                 user.name(),
-                user.username().value(),
-                userRoles
-        );
+                user.email().value(),
+                userRoles);
     }
 }

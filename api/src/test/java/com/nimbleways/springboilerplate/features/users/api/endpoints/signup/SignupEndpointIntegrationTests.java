@@ -27,14 +27,14 @@ class SignupEndpointIntegrationTests extends BaseWebMvcIntegrationTests {
             .perform(post(SIGNUP_ENDPOINT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
-                    {"name":"Name", "username":"Username",
+                    {"name":"Name", "email":"Email",
                     "password":"password", "roles":["ADMIN"]}""")
             )
 
         // THEN
             .andExpect(status().isCreated())
             .andExpect(jsonIgnoreArrayOrder("""
-                    {"id":"%s","name":"Name","username":"Username","roles":["ADMIN"]}"""
+                    {"id":"%s","name":"Name","email":"Email","roles":["ADMIN"]}"""
                     .formatted(getUserId().toString())
             ));
     }

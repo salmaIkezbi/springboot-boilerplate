@@ -16,7 +16,7 @@ import com.nimbleways.springboilerplate.features.authentication.domain.entities.
 import com.nimbleways.springboilerplate.features.authentication.domain.entities.UserSession;
 import com.nimbleways.springboilerplate.features.authentication.domain.events.UserLoggedInEvent;
 import com.nimbleways.springboilerplate.features.authentication.domain.exceptions.BadUserCredentialException;
-import com.nimbleways.springboilerplate.features.authentication.domain.exceptions.UnknownUsernameException;
+import com.nimbleways.springboilerplate.features.authentication.domain.exceptions.UnknownEmailException;
 import com.nimbleways.springboilerplate.features.authentication.domain.usecases.login.LoginCommand;
 import com.nimbleways.springboilerplate.features.authentication.domain.valueobjects.RefreshToken;
 import com.nimbleways.springboilerplate.features.authentication.domain.valueobjects.UserTokens;
@@ -37,13 +37,14 @@ class LoginUseCaseUnitTests {
     private final LoginSut sut = Instance.create(LoginSut.class);
 
     @Test
-    void login_with_good_username_and_password_returns_user_tokens() {
+    void login_with_good_email_and_password_returns_user_tokens() {
         // GIVEN
         LoginCommand loginCommand = aLoginCommand();
         User user = sut.userRepository().create(getUser(loginCommand));
 
         UserPrincipal expectedUserPrincipal = toUserPrincipal(user);
-        Instant expectedExpirationTime = sut.timeProvider().instant().plus(sut.tokenProperties().accessTokenValidityDuration());
+        Instant expectedExpirationTime = sut.timeProvider().instant()
+                .plus(sut.tokenProperties().accessTokenValidityDuration());
 
         // WHEN
         UserTokens tokens = sut.login(loginCommand);
@@ -55,7 +56,7 @@ class LoginUseCaseUnitTests {
     }
 
     @Test
-    void login_with_good_username_and_password_returns_new_tokens_each_time() {
+    void login_with_good_login_and_password_returns_new_tokens_each_time() {
         // GIVEN
         LoginCommand loginCommand = aLoginCommand();
         sut.userRepository().create(getUser(loginCommand));
@@ -70,7 +71,7 @@ class LoginUseCaseUnitTests {
     }
 
     @Test
-    void login_with_good_username_and_password_publishes_UserLoggedInEvent() {
+    void login_with_good_login_and_password_publishes_UserLoggedInEvent() {
         // GIVEN
         LoginCommand loginCommand = aLoginCommand();
         User user = sut.userRepository().create(getUser(loginCommand));
@@ -88,7 +89,7 @@ class LoginUseCaseUnitTests {
     }
 
     @Test
-    void login_with_good_username_and_password_returns_a_refreshToken_with_expected_duration() {
+    void login_with_good_login_and_password_returns_a_refreshToken_with_expected_duration() {
         // GIVEN
         LoginCommand loginCommand = aLoginCommand();
         User user = sut.userRepository().create(getUser(loginCommand));
@@ -96,8 +97,7 @@ class LoginUseCaseUnitTests {
         UserSession expectedUserSession = new UserSession(
                 new RefreshToken("cfcd2084-95d5-35ef-a6e7-dff9f98764da"),
                 sut.timeProvider().instant().plus(sut.tokenProperties().refreshTokenValidityDuration()),
-                toUserPrincipal(user)
-        );
+                toUserPrincipal(user));
 
         // WHEN
         sut.login(loginCommand);
@@ -108,7 +108,7 @@ class LoginUseCaseUnitTests {
     }
 
     @Test
-    void login_with_non_existing_username_throws_UnknownUsernameException() {
+    void login_with_non_existing_login_throws_UnknownEmailException() {
         // GIVEN
         LoginCommand loginCommand = aLoginCommand();
 
@@ -116,12 +116,12 @@ class LoginUseCaseUnitTests {
         Exception ex = assertThrows(Exception.class, () -> sut.login(loginCommand));
 
         // THEN
-        assertEquals(UnknownUsernameException.class, ex.getClass());
-        assertEquals("Username not found: username", ex.getMessage());
+        assertEquals(UnknownEmailException.class, ex.getClass());
+        assertEquals("email not found: email", ex.getMessage());
     }
 
     @Test
-    void login_with_good_username_and_bad_password_throws_BadUserCredentialException() {
+    void login_with_good_email_and_bad_password_throws_BadUserCredentialException() {
         // GIVEN
         LoginCommand loginCommand = aLoginCommand("bad_password");
         sut.userRepository().create(getUser(loginCommand, "password"));
@@ -131,7 +131,7 @@ class LoginUseCaseUnitTests {
 
         // THEN
         assertEquals(BadUserCredentialException.class, ex.getClass());
-        assertEquals("Bad password provided for username: username", ex.getMessage());
+        assertEquals("Bad password provided for email: email", ex.getMessage());
     }
 
     private TokenClaims getTokenClaims(UserTokens tokens) {
@@ -140,9 +140,9 @@ class LoginUseCaseUnitTests {
 
     private static NewUser getUser(LoginCommand loginCommand, String password) {
         return aNewUser()
-            .username(loginCommand.username().value())
-            .plainPassword(password)
-            .build();
+                .email(loginCommand.email())
+                .plainPassword(password)
+                .build();
     }
 
     private static NewUser getUser(LoginCommand loginCommand) {

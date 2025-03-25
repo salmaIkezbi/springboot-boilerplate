@@ -76,14 +76,14 @@ public class FakeTokenClaimsCodec implements TokenClaimsCodecPort, JwtDecoder {
 
         UserPrincipal user = tokenClaims.userPrincipal();
         List<String> roles = Mutable.collectList(user.roles(), RoleMapper.INSTANCE::fromValueObject);
-        String subject = "%s,%s".formatted(user.id(), user.username().value());
+        String subject = "%s,%s".formatted(user.id(), user.email().value());
         return Jwt.withTokenValue(token)
-            .header("alg", "none")
-            .claim("scope", roles)
-            .expiresAt(tokenClaims.expirationTime())
-            .issuedAt(tokenClaims.creationTime())
-            .subject(subject)
-            .build();
+                .header("alg", "none")
+                .claim("scope", roles)
+                .expiresAt(tokenClaims.expirationTime())
+                .issuedAt(tokenClaims.creationTime())
+                .subject(subject)
+                .build();
     }
 
     private static ObjectMapper createObjectMapper() {
@@ -98,5 +98,6 @@ public class FakeTokenClaimsCodec implements TokenClaimsCodecPort, JwtDecoder {
         return objectMapper;
     }
 
-    private record ClaimWrapper(UUID rand, TokenClaims tokenClaims) {}
+    private record ClaimWrapper(UUID rand, TokenClaims tokenClaims) {
+    }
 }

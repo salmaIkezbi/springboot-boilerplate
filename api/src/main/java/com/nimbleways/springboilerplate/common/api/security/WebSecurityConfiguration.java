@@ -28,17 +28,15 @@ public class WebSecurityConfiguration {
     @Bean
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public SecurityFilterChain filterChain(
-        final HttpSecurity http,
-        final StandaloneJwtAuthentication standaloneJwtAuthentication
-    ) throws Exception {
+            final HttpSecurity http,
+            final StandaloneJwtAuthentication standaloneJwtAuthentication) throws Exception {
         // Enable CORS and disables CSRF
         http.cors(allowAllOrigins())
-            .csrf(AbstractHttpConfigurer::disable);
+                .csrf(AbstractHttpConfigurer::disable);
 
         // Disable session creation
         http.sessionManagement((session) -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        );
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         // disable request saving on authentication error
         // https://docs.spring.io/spring-security/reference/servlet/architecture.html#requestcache-prevent-saved-request
@@ -52,13 +50,14 @@ public class WebSecurityConfiguration {
     @Bean
     public FilterRegistrationBean<SimpleBasicAuthenticationFilter> managementFilter(
             @Value("${management.endpoints.web.base-path:/actuator}") String actuatorBasePath,
-            @Value("${management.server.user}") String username,
+            @Value("${management.server.user}") String email,
             @Value("${management.server.password}") String password) {
         FilterRegistrationBean<SimpleBasicAuthenticationFilter> registrationBean = new FilterRegistrationBean<>();
-        registrationBean.setFilter(new SimpleBasicAuthenticationFilter("Actuator", username, password));
+        registrationBean.setFilter(new SimpleBasicAuthenticationFilter("Actuator", email, password));
         registrationBean.setEnabled(true);
         registrationBean.addUrlPatterns(actuatorBasePath.replaceAll("/+$", "") + "/*");
-        registrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE); // needed so that errors are returned as ProblemDetails JSON
+        registrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE); // needed so that errors are returned as ProblemDetails
+                                                               // JSON
         return registrationBean;
     }
 

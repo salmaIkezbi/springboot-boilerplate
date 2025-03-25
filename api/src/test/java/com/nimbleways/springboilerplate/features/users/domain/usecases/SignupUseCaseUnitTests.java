@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.nimbleways.springboilerplate.common.domain.valueobjects.EncodedPassword;
 import com.nimbleways.springboilerplate.common.domain.valueobjects.Role;
-import com.nimbleways.springboilerplate.common.domain.valueobjects.Username;
 import com.nimbleways.springboilerplate.common.utils.collections.Immutable;
 import com.nimbleways.springboilerplate.features.users.domain.entities.User;
 import com.nimbleways.springboilerplate.features.users.domain.usecases.signup.SignupCommand;
@@ -49,9 +48,9 @@ class SignupUseCaseUnitTests {
 
         // THEN
         assertThat(user)
-            .usingRecursiveComparison()
-            .ignoringFields("id", "roles.id")
-            .isEqualTo(expectedUser);
+                .usingRecursiveComparison()
+                .ignoringFields("id", "roles.id")
+                .isEqualTo(expectedUser);
     }
 
     @Test
@@ -63,35 +62,34 @@ class SignupUseCaseUnitTests {
         sut.signup(signupCommand);
 
         // THEN
-        EncodedPassword encodedPassword = getPasswordFromRepository(signupCommand.username());
+        EncodedPassword encodedPassword = getPasswordFromRepository(signupCommand.email().value());
         boolean passwordMatches = sut.passwordEncoder()
-            .matches(signupCommand.plainPassword(), encodedPassword);
+                .matches(signupCommand.plainPassword(), encodedPassword);
         assertTrue(passwordMatches);
     }
 
-    private EncodedPassword getPasswordFromRepository(Username username) {
+    private EncodedPassword getPasswordFromRepository(String email) {
         return sut
-            .userRepository()
-            .findUserCredentialByUsername(username)
-            .orElseThrow()
-            .encodedPassword();
+                .userRepository()
+                .findUserCredentialByEmail(email)
+                .orElseThrow()
+                .encodedPassword();
     }
 
     private User getUser(SignupCommand signupCommand) {
         return new User(
-            UUID.randomUUID(),
-            signupCommand.name(),
-            signupCommand.username(),
-            sut.timeProvider().instant(),
-            signupCommand.roles()
-        );
+                UUID.randomUUID(),
+                signupCommand.name(),
+                signupCommand.email(),
+                sut.timeProvider().instant(),
+                signupCommand.roles());
     }
 
     private static SignupCommand createSignupCommand() {
         User inputUser = aUser().roles(Immutable.set.of(Role.ADMIN)).build();
         return new SignupCommand(inputUser.name(),
-            inputUser.username(), "password",
-            inputUser.roles());
+                inputUser.email(), "password",
+                inputUser.roles());
     }
 
 }

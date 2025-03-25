@@ -8,7 +8,7 @@ import com.nimbleways.springboilerplate.features.authentication.domain.entities.
 import com.nimbleways.springboilerplate.features.authentication.domain.entities.UserPrincipal;
 import com.nimbleways.springboilerplate.features.authentication.domain.events.UserLoggedInEvent;
 import com.nimbleways.springboilerplate.features.authentication.domain.exceptions.BadUserCredentialException;
-import com.nimbleways.springboilerplate.features.authentication.domain.exceptions.UnknownUsernameException;
+import com.nimbleways.springboilerplate.features.authentication.domain.exceptions.UnknownEmailException;
 import com.nimbleways.springboilerplate.features.authentication.domain.ports.TokenClaimsCodecPort;
 import com.nimbleways.springboilerplate.features.authentication.domain.ports.UserCredentialsRepositoryPort;
 import com.nimbleways.springboilerplate.features.authentication.domain.ports.UserSessionRepositoryPort;
@@ -24,30 +24,28 @@ public class LoginUseCase {
     private final EventPublisherPort eventPublisher;
 
     public LoginUseCase(
-        final UserCredentialsRepositoryPort userRepository,
-        final PasswordEncoderPort passwordEncoder,
-        final EventPublisherPort eventPublisher,
-        /* RefreshTokenService dependencies */
-        final UserSessionRepositoryPort userSessionRepository,
-        final TokenClaimsCodecPort tokenGenerator,
-        final TokenProperties tokenProperties,
-        final TimeProviderPort timeProvider,
-        final RandomGeneratorPort randomGenerator
-    ) {
+            final UserCredentialsRepositoryPort userRepository,
+            final PasswordEncoderPort passwordEncoder,
+            final EventPublisherPort eventPublisher,
+            /* RefreshTokenService dependencies */
+            final UserSessionRepositoryPort userSessionRepository,
+            final TokenClaimsCodecPort tokenGenerator,
+            final TokenProperties tokenProperties,
+            final TimeProviderPort timeProvider,
+            final RandomGeneratorPort randomGenerator) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.eventPublisher = eventPublisher;
         this.refreshTokenService = new RefreshTokenService(
-                userSessionRepository, tokenGenerator, tokenProperties, timeProvider, randomGenerator
-        );
+                userSessionRepository, tokenGenerator, tokenProperties, timeProvider, randomGenerator);
     }
 
     public UserTokens handle(final LoginCommand loginCommand) {
         final UserCredential userCredential = userRepository
-            .findUserCredentialByUsername(loginCommand.username())
-            .orElseThrow(() -> new UnknownUsernameException(loginCommand.username()));
+                .findUserCredentialByEmail(loginCommand.email())
+                .orElseThrow(() -> new UnknownEmailException(loginCommand.email()));
         if (!passwordEncoder.matches(loginCommand.password(), userCredential.encodedPassword())) {
-            throw new BadUserCredentialException(loginCommand.username());
+            throw new BadUserCredentialException(loginCommand.email());
         }
         UserPrincipal userPrincipal = userCredential.userPrincipal();
         final UserTokens userTokens = refreshTokenService.createUserTokens(userPrincipal);

@@ -20,9 +20,8 @@ public class UserSessionRepository implements UserSessionRepositoryPort {
     private final JpaUserRepository jpaUserRepository;
 
     public UserSessionRepository(
-        JpaUserSessionRepository jpaUserSessionRepository,
-        JpaUserRepository jpaUserRepository
-    ) {
+            JpaUserSessionRepository jpaUserSessionRepository,
+            JpaUserRepository jpaUserRepository) {
         this.jpaUserSessionRepository = jpaUserSessionRepository;
         this.jpaUserRepository = jpaUserRepository;
     }
@@ -34,18 +33,17 @@ public class UserSessionRepository implements UserSessionRepositoryPort {
         try {
             jpaUserSessionRepository.saveAndFlush(userSessionDbEntity);
         } catch (DataAccessException ex) {
-            throw new CannotCreateUserSessionInRepositoryException(userSession.userPrincipal().username(), ex);
+            throw new CannotCreateUserSessionInRepositoryException(userSession.userPrincipal().email().value(), ex);
         }
     }
 
     @Override
     public Optional<UserSession> findByRefreshTokenAndExpirationDateAfter(
-        RefreshToken refreshToken,
-        Instant now
-    ) {
+            RefreshToken refreshToken,
+            Instant now) {
         return jpaUserSessionRepository
-            .findValidSessionByRefreshToken(refreshToken.value(), now)
-            .map(UserSessionDbEntity::toUserSession);
+                .findValidSessionByRefreshToken(refreshToken.value(), now)
+                .map(UserSessionDbEntity::toUserSession);
     }
 
     @Override
