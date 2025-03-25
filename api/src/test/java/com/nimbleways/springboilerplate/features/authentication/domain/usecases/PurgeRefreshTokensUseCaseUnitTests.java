@@ -12,6 +12,7 @@ import com.nimbleways.springboilerplate.testhelpers.annotations.UnitTest;
 import java.time.Instant;
 import java.util.List;
 
+import com.nimbleways.springboilerplate.testhelpers.fixtures.NewUserFixture;
 import com.nimbleways.springboilerplate.testhelpers.utils.Instance;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +38,11 @@ class PurgeRefreshTokensUseCaseUnitTests {
     }
 
     private User createUser() {
-        return sut.userRepository().create(aNewUser().build());
+        NewUserFixture.UserData userData = new NewUserFixture.UserData.Builder()
+                .build();
+        return sut.userRepository().create(aNewUser()
+                .userData(userData)
+                .build());
     }
 
     private UserSession addSession(User user, Instant expirationDate) {

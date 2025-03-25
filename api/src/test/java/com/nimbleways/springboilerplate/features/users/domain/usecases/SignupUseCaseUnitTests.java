@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.nimbleways.springboilerplate.common.domain.valueobjects.EncodedPassword;
 import com.nimbleways.springboilerplate.common.domain.valueobjects.Role;
-import com.nimbleways.springboilerplate.common.utils.collections.Immutable;
 import com.nimbleways.springboilerplate.features.users.domain.entities.User;
 import com.nimbleways.springboilerplate.features.users.domain.usecases.signup.SignupCommand;
 import com.nimbleways.springboilerplate.testhelpers.annotations.UnitTest;
@@ -82,14 +81,18 @@ class SignupUseCaseUnitTests {
                 signupCommand.name(),
                 signupCommand.email(),
                 sut.timeProvider().instant(),
-                signupCommand.roles());
+                signupCommand.role(),
+                signupCommand.employmentDate(),
+                false,
+                false);
     }
 
     private static SignupCommand createSignupCommand() {
-        User inputUser = aUser().roles(Immutable.set.of(Role.ADMIN)).build();
+        User inputUser = aUser().role(String.valueOf(Role.ADMIN)).build();
         return new SignupCommand(inputUser.name(),
                 inputUser.email(), "password",
-                inputUser.roles());
+                inputUser.role(),
+                inputUser.employmentDate());
     }
 
 }
