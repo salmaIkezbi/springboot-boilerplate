@@ -17,6 +17,8 @@ import org.hibernate.annotations.UuidGenerator;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @SuppressWarnings("PMD.ExcessiveImports")
@@ -68,6 +70,10 @@ public class UserDbEntity {
     @Column(name = "shouldReceiveMailNotifications")
     @NotNull
     private Boolean shouldReceiveMailNotifications = false;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @NotNull
+    private List<PurchaseDbEntity> purchases = new ArrayList<>();
 
     public static UserDbEntity from(NewUser newUser) {
         String role = newUser.role();
