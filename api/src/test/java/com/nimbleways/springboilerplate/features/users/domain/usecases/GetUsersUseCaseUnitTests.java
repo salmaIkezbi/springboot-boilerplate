@@ -48,7 +48,9 @@ class GetUserUseCaseUnitTests {
                 () -> sut.getUser(randomUuid));
 
         assertEquals(UserNotFoundInRepositoryException.class, exception.getClass());
+        assertThat(exception.getCause()).isInstanceOf(IllegalArgumentException.class);
         assertEquals("User with ID " + randomUuid.toString() + " not found", exception.getMessage());
+
     }
 
 
