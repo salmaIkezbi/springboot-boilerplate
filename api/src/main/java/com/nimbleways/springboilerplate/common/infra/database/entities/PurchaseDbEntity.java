@@ -59,7 +59,7 @@ public class PurchaseDbEntity {
     public Purchase toPurchase() {
         return new Purchase(
                 id,
-                getUser(),
+                user.id(),
                 brand,
                 model,
                 price,
@@ -67,8 +67,13 @@ public class PurchaseDbEntity {
                 Immutable.list.ofAll(imagePaths()));
     }
 
-    @NotNull
-    private UUID getUser() {
-        return user.id();
+    public static PurchaseDbEntity from(NewPurchase newPurchase) {
+        final PurchaseDbEntity purchaseDbEntity = new PurchaseDbEntity();
+        purchaseDbEntity.brand(newPurchase.brand());
+        purchaseDbEntity.model(newPurchase.model());
+        purchaseDbEntity.price(newPurchase.price());
+        purchaseDbEntity.store(newPurchase.store());
+        purchaseDbEntity.imagePaths(newPurchase.pathImages().toList());
+        return purchaseDbEntity;
     }
 }
