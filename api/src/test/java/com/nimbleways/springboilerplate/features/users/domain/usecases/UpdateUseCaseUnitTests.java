@@ -59,7 +59,6 @@ class UpdateUseCaseUnitTests {
         User user =  sut
                 .userRepository()
                 .findByID(id);
-
         return sut
                 .userRepository()
                 .findUserCredentialByEmail(user.email().value())

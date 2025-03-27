@@ -57,12 +57,13 @@ public class FakeUserRepository implements UserRepositoryPort, UserCredentialsRe
     @Override
     public User findByID(UUID id) {
         return fakeDb.userTable
-                .values() // Récupérer toutes les valeurs (UserWithPassword)
+                .values()
                 .stream()
                 .filter(user -> user.user().id().equals(id)) // Filtrer par UUID
                 .findFirst() // Retourner le premier utilisateur trouvé
                 .map(FakeDatabase.UserWithPassword::user)
-                .orElseThrow(() -> new UserNotFoundInRepositoryException(id.toString(), null)); // Lancer une exception si l'utilisateur n'est pas trouvé
+                .orElseThrow(() -> new UserNotFoundInRepositoryException(id.toString(),
+                        new IllegalArgumentException("User not found in the repository")));
     }
 
     @Override
