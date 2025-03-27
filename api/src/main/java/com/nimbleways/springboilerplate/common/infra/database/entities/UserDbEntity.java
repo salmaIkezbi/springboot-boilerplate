@@ -87,6 +87,20 @@ public class UserDbEntity {
         return userDbEntity;
     }
 
+    public static UserDbEntity fromUser(User user) {
+        String role = user.role();
+        final UserDbEntity userDbEntity = new UserDbEntity();
+        userDbEntity.id(user.id());
+        userDbEntity.name(user.name());
+        userDbEntity.email(user.email().value());
+        userDbEntity.role(role);
+        userDbEntity.employmentDate(user.employmentDate());
+        userDbEntity.shouldReceiveApprovalNotifications(user.shouldReceiveApprovalNotifications());
+        userDbEntity.shouldReceiveMailNotifications(user.shouldReceiveMailNotifications());
+        return userDbEntity;
+    }
+
+
     public User toUser() {
         return new User(
                 id,

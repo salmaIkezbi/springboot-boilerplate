@@ -58,8 +58,10 @@ public class UserRepository implements UserRepositoryPort, UserCredentialsReposi
     }
 
     @Override
-    public Optional<User> findByID(UUID id) {
-        return jpaUserRepository.findById(id).map(UserDbEntity::toUser);
+    public User findByID(UUID id) {
+        return jpaUserRepository.findById(id).map(UserDbEntity::toUser)
+                .orElseThrow(() -> new UserNotFoundInRepositoryException(id.toString(),
+                        new IllegalArgumentException("bad user id ")));
     }
 
     @Override
