@@ -14,6 +14,10 @@ import com.nimbleways.springboilerplate.testhelpers.fixtures.NewUserFixture;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
+<<<<<<< HEAD
+=======
+
+>>>>>>> c0f5ef5 (feat: create new purchase repository)
 
 @UnitTest
 class GetUserUseCaseUnitTests {
@@ -42,6 +46,17 @@ class GetUserUseCaseUnitTests {
     void getting_user_with_random_uuid() {
         // GIVEN : Création d'un nouvel utilisateur avec un UUID aléatoire
         UUID randomUuid = UUID.randomUUID();
+<<<<<<< HEAD
+=======
+
+        Exception exception = assertThrows(Exception.class,
+                () -> sut.getUser(randomUuid));
+
+        assertEquals(UserNotFoundInRepositoryException.class, exception.getClass());
+        assertEquals("User with ID " + randomUuid.toString() + " not found", exception.getMessage());
+    }
+
+>>>>>>> c0f5ef5 (feat: create new purchase repository)
 
         Exception exception = assertThrows(Exception.class,
                 () -> sut.getUser(randomUuid));

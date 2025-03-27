@@ -1,6 +1,7 @@
 package com.nimbleways.springboilerplate.features.users.domain.usecases.getuser;
 
 import com.nimbleways.springboilerplate.features.users.domain.entities.User;
+import com.nimbleways.springboilerplate.features.users.domain.exceptions.UserNotFoundInRepositoryException;
 import com.nimbleways.springboilerplate.features.users.domain.ports.UserRepositoryPort;
 
 import java.util.UUID;
@@ -14,6 +15,7 @@ public class GetUserUseCase {
     }
 
     public User handle(UUID id) {
-        return userRepository.findByID(id);
+        return userRepository.findByID(id)
+                .orElseThrow(() -> new UserNotFoundInRepositoryException(id.toString(),new IllegalArgumentException("user not found")));
     }
 }

@@ -15,11 +15,10 @@ public class FakePurchaseUnitTests extends PurchaseRepositoryPortContractTests {
 
     public FakePurchaseUnitTests() {
         super();
-        BeanBag beans = Instance.create(FakePurchaseRepository.class,FakeUserRepository.class);
+        BeanBag beans = Instance.create(FakePurchaseRepository.class, FakeUserRepository.class);
         this.fakePurchaseRepository = beans.get(FakePurchaseRepository.class);
         this.fakeUserRepository = beans.get(FakeUserRepository.class);
     }
-
 
     @Override
     protected PurchaseRepositoryPort getPurchaseRepository() {
