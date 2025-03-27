@@ -5,11 +5,12 @@ import com.nimbleways.springboilerplate.features.users.domain.valueobjects.NewUs
 import com.nimbleways.springboilerplate.features.users.domain.valueobjects.UpdatedUser;
 import org.eclipse.collections.api.list.ImmutableList;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public interface UserRepositoryPort {
     User create(NewUser userToCreate);
     User update(UpdatedUser userToUpdate);
     ImmutableList<User> findAll();
-    User findByID(UUID id);
+    Optional<User> findByID(UUID id);
 }

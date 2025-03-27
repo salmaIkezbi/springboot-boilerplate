@@ -88,26 +88,7 @@ public abstract class UserRepositoryPortContractTests {
                 user.employmentDate());
     }
 
-    @Test
-    void creating_and_getting_user_with_random_uuid() {
-        // GIVEN : Création d'un nouvel utilisateur avec un UUID aléatoire
-        NewUserFixture.UserData userData = new NewUserFixture.UserData.Builder()
-                .email("email")
-                .build();
-        NewUser newUser = aNewUser().userData(userData)
-                .build();
 
-        // Création de l'utilisateur dans le repository
-        userRepository.create(newUser);
-
-        UUID randomUuid = UUID.randomUUID();
-
-        Exception exception = assertThrows(Exception.class,
-                () -> userRepository.findByID(randomUuid));
-
-        assertEquals(UserNotFoundInRepositoryException.class, exception.getClass());
-        assertEquals("User with ID " + randomUuid.toString() + " not found", exception.getMessage());
-    }
 
     @Test
     void creating_and_getting_user_with_uuid() {
@@ -121,7 +102,8 @@ public abstract class UserRepositoryPortContractTests {
         // Création de l'utilisateur dans le repository
         User createdUser = userRepository.create(newUser);
 
-        User retrievedUser = userRepository.findByID(createdUser.id());
+        User retrievedUser = userRepository.findByID(createdUser.id())
+                .orElseThrow(() -> new UserNotFoundInRepositoryException(createdUser.id().toString(),new IllegalArgumentException("user not found")));
 
         assertNotNull(retrievedUser);
         assertEquals(createdUser.id(), retrievedUser.id());

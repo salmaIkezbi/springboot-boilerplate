@@ -2,6 +2,7 @@ package com.nimbleways.springboilerplate.common.infra.adapters.fakes;
 
 import com.nimbleways.springboilerplate.features.puchases.domain.ports.PurchaseRepositoryPort;
 import com.nimbleways.springboilerplate.features.purchases.domain.ports.PurchaseRepositoryPortContractTests;
+import com.nimbleways.springboilerplate.features.users.domain.ports.UserRepositoryPort;
 import com.nimbleways.springboilerplate.testhelpers.annotations.UnitTest;
 import com.nimbleways.springboilerplate.testhelpers.utils.Instance;
 
@@ -9,15 +10,22 @@ import com.nimbleways.springboilerplate.testhelpers.utils.Instance;
 public class FakePurchaseUnitTests extends PurchaseRepositoryPortContractTests {
 
     private final FakePurchaseRepository fakePurchaseRepository;
+    private final FakeUserRepository fakeUserRepository;
 
     public FakePurchaseUnitTests() {
         super();
         this.fakePurchaseRepository = Instance.create(FakePurchaseRepository.class);
+        this.fakeUserRepository = Instance.create(FakeUserRepository.class);
     }
 
 
     @Override
     protected PurchaseRepositoryPort getPurchaseRepository() {
         return fakePurchaseRepository;
+    }
+
+    @Override
+    protected UserRepositoryPort getUserRepository() {
+        return fakeUserRepository;
     }
 }
