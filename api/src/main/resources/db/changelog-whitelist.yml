@@ -4,6 +4,5 @@ whitelisted_files:
     explanation: "Example file to ignore"
   - file: "changelog/20250313-122708-add-email.yaml"
     explanation: "Destructive query related to email column update"
-
-
-
+  - file: "changelog/20250317-140725-replace-roles-collections-with-role-string.yaml"
+    explanation: "Destructive query related to email column update"

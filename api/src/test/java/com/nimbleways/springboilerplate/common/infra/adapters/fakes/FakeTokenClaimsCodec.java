@@ -9,8 +9,6 @@ import com.fasterxml.jackson.databind.type.LogicalType;
 import com.fasterxml.jackson.datatype.eclipsecollections.EclipseCollectionsModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nimbleways.springboilerplate.common.domain.ports.TimeProviderPort;
-import com.nimbleways.springboilerplate.common.infra.mappers.RoleMapper;
-import com.nimbleways.springboilerplate.common.utils.collections.Mutable;
 import com.nimbleways.springboilerplate.features.authentication.domain.entities.TokenClaims;
 import com.nimbleways.springboilerplate.features.authentication.domain.entities.UserPrincipal;
 import com.nimbleways.springboilerplate.features.authentication.domain.exceptions.AccessTokenDecodingException;
@@ -45,15 +43,13 @@ public class FakeTokenClaimsCodec implements TokenClaimsCodecPort, JwtDecoder {
 
     @SneakyThrows
     @Override
+    /* hna */
     public TokenClaims decodeWithoutExpirationValidation(AccessToken token) {
         ClaimWrapper claimWrapper;
         try {
             claimWrapper = objectMapper.readValue(token.value(), ClaimWrapper.class);
         } catch (MismatchedInputException | JsonParseException exception) {
             throw new AccessTokenDecodingException(exception, token);
-        }
-        if (claimWrapper.tokenClaims.userPrincipal().roles() == null) {
-            throw new AccessTokenDecodingException("missing claim 'scope'", token);
         }
         return claimWrapper.tokenClaims();
     }
@@ -75,11 +71,12 @@ public class FakeTokenClaimsCodec implements TokenClaimsCodecPort, JwtDecoder {
         }
 
         UserPrincipal user = tokenClaims.userPrincipal();
-        List<String> roles = Mutable.collectList(user.roles(), RoleMapper.INSTANCE::fromValueObject);
+        String role = user.role();
+
         String subject = "%s,%s".formatted(user.id(), user.email().value());
         return Jwt.withTokenValue(token)
                 .header("alg", "none")
-                .claim("scope", roles)
+                .claim("scope", role)
                 .expiresAt(tokenClaims.expirationTime())
                 .issuedAt(tokenClaims.creationTime())
                 .subject(subject)
