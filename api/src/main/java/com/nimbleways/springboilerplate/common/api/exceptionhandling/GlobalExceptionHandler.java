@@ -2,7 +2,10 @@ package com.nimbleways.springboilerplate.common.api.exceptionhandling;
 
 import com.nimbleways.springboilerplate.common.domain.ports.EventPublisherPort;
 import com.nimbleways.springboilerplate.features.authentication.domain.exceptions.AbstractAuthenticationDomainException;
+import com.nimbleways.springboilerplate.features.authentication.domain.exceptions.BadUserCredentialException;
+import com.nimbleways.springboilerplate.features.authentication.domain.exceptions.UnknownEmailException;
 import com.nimbleways.springboilerplate.features.users.domain.exceptions.EmailAlreadyExistsInRepositoryException;
+import com.nimbleways.springboilerplate.features.users.domain.exceptions.UserNotFoundInRepositoryException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
@@ -38,6 +41,27 @@ public class GlobalExceptionHandler extends BaseResponseEntityExceptionHandler {
     public final ResponseEntity<Object> handleException(EmailAlreadyExistsInRepositoryException ex,
                                                         WebRequest request) {
         return getDefaultResponseEntity(ex, request, HttpStatus.BAD_REQUEST, ApiErrorCodes.EMAIL_ALREADY_EXISTS_ERROR);
+    }
+
+    @ExceptionHandler({ UserNotFoundInRepositoryException.class })
+    @Nullable
+    public final ResponseEntity<Object> handleException(UserNotFoundInRepositoryException ex,
+                                                        WebRequest request) {
+        return getDefaultResponseEntity(ex, request, HttpStatus.NOT_FOUND, ApiErrorCodes.USER_NOT_FOUND_ERROR);
+    }
+
+    @ExceptionHandler({ UnknownEmailException.class })
+    @Nullable
+    public final ResponseEntity<Object> handleException(UnknownEmailException ex,
+                                                        WebRequest request) {
+        return getDefaultResponseEntity(ex, request, HttpStatus.UNAUTHORIZED, ApiErrorCodes.EMAIL_NOT_FOUND_ERROR);
+    }
+
+    @ExceptionHandler({ BadUserCredentialException.class })
+    @Nullable
+    public final ResponseEntity<Object> handleException(BadUserCredentialException ex,
+                                                        WebRequest request) {
+        return getDefaultResponseEntity(ex, request, HttpStatus.UNAUTHORIZED, ApiErrorCodes.BAD_Credential_ERROR);
     }
 
     @ExceptionHandler({ Exception.class })
