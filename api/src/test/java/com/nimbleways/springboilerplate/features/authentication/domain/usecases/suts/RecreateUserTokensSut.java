@@ -21,6 +21,7 @@ import com.nimbleways.springboilerplate.testhelpers.configurations.TimeTestConfi
 import com.nimbleways.springboilerplate.common.infra.adapters.fakes.FakeRandomGenerator;
 import java.time.Instant;
 
+import com.nimbleways.springboilerplate.testhelpers.fixtures.NewUserFixture;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -68,7 +69,11 @@ public class RecreateUserTokensSut {
 
     @NotNull
     public TestData addUserAndSessionToRepository() {
-        User user = userRepository().create(aNewUser().build());
+        NewUserFixture.UserData userData = new NewUserFixture.UserData.Builder()
+                .build();
+        User user = userRepository().create(aNewUser()
+                .userData(userData)
+                .build());
         TestData testData = createUserSessionAndTokens(user);
         userSessionRepository().create(testData.userSession());
         return testData;

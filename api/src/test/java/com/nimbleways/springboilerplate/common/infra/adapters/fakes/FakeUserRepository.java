@@ -6,6 +6,7 @@ import com.nimbleways.springboilerplate.features.authentication.domain.entities.
 import com.nimbleways.springboilerplate.features.authentication.domain.ports.UserCredentialsRepositoryPort;
 import com.nimbleways.springboilerplate.features.users.domain.entities.User;
 import com.nimbleways.springboilerplate.features.users.domain.exceptions.EmailAlreadyExistsInRepositoryException;
+import com.nimbleways.springboilerplate.features.users.domain.exceptions.UserNotFoundInRepositoryException;
 import com.nimbleways.springboilerplate.features.users.domain.ports.UserRepositoryPort;
 import com.nimbleways.springboilerplate.features.users.domain.valueobjects.NewUser;
 import java.util.Optional;
@@ -35,6 +36,17 @@ public class FakeUserRepository implements UserRepositoryPort, UserCredentialsRe
     }
 
     @Override
+    public User findByID(UUID id) {
+        return fakeDb.userTable
+                .values() // Récupérer toutes les valeurs (UserWithPassword)
+                .stream()
+                .filter(user -> user.user().id().equals(id)) // Filtrer par UUID
+                .findFirst() // Retourner le premier utilisateur trouvé
+                .map(FakeDatabase.UserWithPassword::user)
+                .orElseThrow(() -> new UserNotFoundInRepositoryException(id.toString(), null)); // Lancer une exception si l'utilisateur n'est pas trouvé
+    }
+
+    @Override
     public Optional<UserCredential> findUserCredentialByEmail(String email) {
         return Optional
                 .ofNullable(fakeDb.userTable.get(email))
@@ -44,7 +56,8 @@ public class FakeUserRepository implements UserRepositoryPort, UserCredentialsRe
     private static User toUser(NewUser userToCreate) {
         return new User(UUID.randomUUID(), userToCreate.name(), userToCreate.email(),
                 userToCreate.creationDateTime(),
-                userToCreate.roles());
+                userToCreate.role(),
+                userToCreate.employmentDate());
     }
 
     private void ensureUserDoesNotExist(String email) {

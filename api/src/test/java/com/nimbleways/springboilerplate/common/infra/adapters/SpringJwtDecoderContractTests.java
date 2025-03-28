@@ -1,13 +1,11 @@
 package com.nimbleways.springboilerplate.common.infra.adapters;
 
 import static com.nimbleways.springboilerplate.features.authentication.domain.entities.UserPrincipalBuilder.aUserPrincipal;
-import static org.assertj.core.api.Assertions.assertThatObject;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.nimbleways.springboilerplate.common.domain.ports.TimeProviderPort;
 import com.nimbleways.springboilerplate.common.domain.valueobjects.Role;
-import com.nimbleways.springboilerplate.common.utils.collections.Immutable;
 import com.nimbleways.springboilerplate.features.authentication.domain.entities.TokenClaims;
 import com.nimbleways.springboilerplate.features.authentication.domain.entities.UserPrincipal;
 import com.nimbleways.springboilerplate.testhelpers.configurations.TimeTestConfiguration;
@@ -15,7 +13,6 @@ import com.nimbleways.springboilerplate.testhelpers.configurations.TimeTestConfi
 import java.time.Instant;
 import java.util.List;
 
-import org.assertj.core.api.InstanceOfAssertFactories;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,42 +34,21 @@ public abstract class SpringJwtDecoderContractTests {
 
     @Test
     void returns_valid_Jwt_with_one_role() {
-        TokenClaims claims = getTokenClaims(timeProvider.instant().plusSeconds(10), Role.USER);
+        TokenClaims claims = getTokenClaims(timeProvider.instant().plusSeconds(10), String.valueOf(Role.USER));
         String token = encode(claims);
 
         Jwt jwt = jwtDecoder.decode(token);
 
         assertEquals(adjustPrecision(claims.expirationTime()), jwt.getExpiresAt());
         assertEquals(adjustPrecision(claims.creationTime()), jwt.getIssuedAt());
-        assertEquals(List.of("USER"), jwt.getClaim("scope"));
+        assertEquals("USER", jwt.getClaim("scope"));
         assertEquals(getExpectedSubject(claims.userPrincipal()), jwt.getSubject());
     }
 
-    @Test
-    void returns_valid_Jwt_without_role() {
-        TokenClaims claims = getTokenClaims(timeProvider.instant().plusSeconds(10));
-        String token = encode(claims);
-
-        Jwt jwt = jwtDecoder.decode(token);
-
-        assertEquals(List.of(), jwt.getClaim("scope"));
-    }
-
-    @Test
-    void returns_valid_Jwt_with_two_roles() {
-        TokenClaims claims = getTokenClaims(timeProvider.instant().plusSeconds(1), Role.USER, Role.ADMIN);
-        String token = encode(claims);
-
-        Jwt jwt = jwtDecoder.decode(token);
-
-        assertThatObject(jwt.getClaim("scope"))
-                .asInstanceOf(InstanceOfAssertFactories.iterable(String.class))
-                .containsExactlyInAnyOrder("USER", "ADMIN");
-    }
 
     @Test
     void throws_JwtValidationException_if_expired() {
-        TokenClaims claims = getTokenClaims(timeProvider.instant().minusSeconds(1), Role.USER);
+        TokenClaims claims = getTokenClaims(timeProvider.instant().minusSeconds(1), String.valueOf(Role.USER));
         String token = encode(claims);
 
         JwtValidationException exception = assertThrows(JwtValidationException.class, () -> jwtDecoder.decode(token));
@@ -94,9 +70,9 @@ public abstract class SpringJwtDecoderContractTests {
     }
 
     @NotNull
-    private TokenClaims getTokenClaims(Instant expirationTime, Role... roles) {
+    private TokenClaims getTokenClaims(Instant expirationTime,String role) {
         return new TokenClaims(
-                aUserPrincipal().roles(Immutable.set.of(roles)).build(),
+                aUserPrincipal().role(role).build(),
                 expirationTime.minusSeconds(1),
                 expirationTime);
     }

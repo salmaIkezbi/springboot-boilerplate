@@ -1,12 +1,10 @@
 package com.nimbleways.springboilerplate.features.authentication.domain.ports;
 
 import static com.nimbleways.springboilerplate.features.authentication.domain.entities.UserPrincipalBuilder.aUserPrincipal;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.nimbleways.springboilerplate.common.domain.ports.TimeProviderPort;
 import com.nimbleways.springboilerplate.common.domain.valueobjects.Role;
-import com.nimbleways.springboilerplate.common.utils.collections.Immutable;
 import com.nimbleways.springboilerplate.features.authentication.domain.entities.TokenClaims;
 import com.nimbleways.springboilerplate.features.authentication.domain.exceptions.AccessTokenDecodingException;
 import com.nimbleways.springboilerplate.features.authentication.domain.valueobjects.AccessToken;
@@ -27,7 +25,7 @@ public abstract class TokenClaimsCodecPortContractTests {
 
     @Test
     void encoding_a_valid_claim_returns_a_non_null_accesstoken() {
-        TokenClaims claims = getTokenClaims(Role.USER);
+        TokenClaims claims = getTokenClaims(String.valueOf(Role.USER));
 
         AccessToken token = tokenCodec.encode(claims);
 
@@ -36,7 +34,7 @@ public abstract class TokenClaimsCodecPortContractTests {
 
     @Test
     void encoding_the_same_claim_twice_returns_different_accesstokens() {
-        TokenClaims claims = getTokenClaims(Role.USER);
+        TokenClaims claims = getTokenClaims(String.valueOf(Role.USER));
 
         AccessToken firstToken = tokenCodec.encode(claims);
         AccessToken secondToken = tokenCodec.encode(claims);
@@ -46,7 +44,7 @@ public abstract class TokenClaimsCodecPortContractTests {
 
     @Test
     void decoding_a_valid_accesstoken_with_one_role_returns_the_initial_claim() {
-        TokenClaims claims = getTokenClaims(Role.USER);
+        TokenClaims claims = getTokenClaims(String.valueOf(Role.USER));
         AccessToken token = tokenCodec.encode(claims);
         TokenClaims decodedClaims = tokenCodec.decodeWithoutExpirationValidation(token);
         assertEquals(claims.userPrincipal(), decodedClaims.userPrincipal());
@@ -54,24 +52,15 @@ public abstract class TokenClaimsCodecPortContractTests {
         assertEquals(adjustPrecision(claims.expirationTime()), decodedClaims.expirationTime());
     }
 
-    @Test
-    void decoding_a_valid_accesstoken_with_two_roles_returns_the_initial_claim() {
-        TokenClaims claims = getTokenClaims(Role.USER, Role.ADMIN);
-        AccessToken token = tokenCodec.encode(claims);
-
-        TokenClaims decodedClaims = tokenCodec.decodeWithoutExpirationValidation(token);
-
-        assertThat(decodedClaims.userPrincipal().roles()).containsExactlyInAnyOrder(Role.USER, Role.ADMIN);
-    }
 
     @Test
     void decoding_a_valid_accesstoken_with_empty_roles_returns_the_initial_claim() {
-        TokenClaims claims = getTokenClaims();
+        TokenClaims claims = getTokenClaims("USER");
         AccessToken token = tokenCodec.encode(claims);
 
         TokenClaims decodedClaims = tokenCodec.decodeWithoutExpirationValidation(token);
 
-        assertEquals(0, decodedClaims.userPrincipal().roles().size());
+        assertEquals("USER", decodedClaims.userPrincipal().role());
     }
 
     @Test
@@ -90,29 +79,31 @@ public abstract class TokenClaimsCodecPortContractTests {
         AccessToken token = new AccessToken("abc");
 
         Exception exception = assertThrows(Exception.class,
-            () -> tokenCodec.decodeWithoutExpirationValidation(token));
+                () -> tokenCodec.decodeWithoutExpirationValidation(token));
 
         assertEquals(AccessTokenDecodingException.class, exception.getClass());
         assertEquals("Cannot decode token 'abc'", exception.getMessage());
     }
 
     @Test
-    void decoding_an_accesstoken_without_roles_throws_AccessTokenDecodingException() {
+    void decoding_an_accesstoken_without_roles_throws_AccessTokenDecodingException()
+    {
         AccessToken token = getTokenWithoutRoleAttribute();
-
         Exception exception = assertThrows(Exception.class,
-            () -> tokenCodec.decodeWithoutExpirationValidation(token));
-
+                () -> {
+                    tokenCodec.decodeWithoutExpirationValidation(token);
+                });
         assertEquals(AccessTokenDecodingException.class, exception.getClass());
         assertTrue(exception.getMessage().startsWith("Cannot decode token '" + token.value() + "'"));
     }
+
 
     @Test
     void decoding_an_accesstoken_with_invalid_roles_array_claim_throws_AccessTokenDecodingException() {
         AccessToken token = getTokenWithInvalidRolesArrayClaim();
 
         Exception exception = assertThrows(Exception.class,
-            () -> tokenCodec.decodeWithoutExpirationValidation(token));
+                () -> tokenCodec.decodeWithoutExpirationValidation(token));
 
         assertEquals(AccessTokenDecodingException.class, exception.getClass());
         assertTrue(exception.getMessage().startsWith("Cannot decode token '" + token.value() + "'"));
@@ -121,21 +112,20 @@ public abstract class TokenClaimsCodecPortContractTests {
     @Test
     void decoding_an_accesstoken_with_invalid_roles_scalar_claim_throws_AccessTokenDecodingException() {
         AccessToken token = getTokenWithInvalidRolesScalarClaim();
-
         Exception exception = assertThrows(Exception.class,
-            () -> tokenCodec.decodeWithoutExpirationValidation(token));
+                () -> tokenCodec.decodeWithoutExpirationValidation(token));
 
         assertEquals(AccessTokenDecodingException.class, exception.getClass());
         assertTrue(exception.getMessage().startsWith("Cannot decode token '" + token.value() + "'"));
     }
 
     @NotNull
-    private TokenClaims getTokenClaims(Role ...roles) {
+    private TokenClaims getTokenClaims(String role) {
         Instant now = getTimeProvider().instant();
         return new TokenClaims(
-            aUserPrincipal().roles(Immutable.set.of(roles)).build(),
-            now,
-            now.plusSeconds(1)
+                aUserPrincipal().role(role).build(),
+                now,
+                now.plusSeconds(1)
         );
     }
 
