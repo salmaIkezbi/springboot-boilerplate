@@ -1,23 +1,20 @@
 package com.nimbleways.springboilerplate.features.purchases.domain.usecases;
 
 import com.nimbleways.springboilerplate.features.puchases.domain.entities.Purchase;
-import com.nimbleways.springboilerplate.features.purchases.domain.usecases.suts.GetPurchaseSut;
+import com.nimbleways.springboilerplate.features.purchases.domain.usecases.suts.GetDetailsSut;
 import com.nimbleways.springboilerplate.features.users.domain.entities.User;
 import com.nimbleways.springboilerplate.testhelpers.annotations.UnitTest;
 import com.nimbleways.springboilerplate.testhelpers.fixtures.NewUserFixture;
 import com.nimbleways.springboilerplate.testhelpers.utils.Instance;
-import org.eclipse.collections.api.list.ImmutableList;
 import org.junit.jupiter.api.Test;
-
-
 
 import static com.nimbleways.springboilerplate.features.puchases.domain.valueobjects.NewPurchaseBuilder.aNewPurchase;
 import static com.nimbleways.springboilerplate.features.users.domain.valueobjects.NewUserBuilder.aNewUser;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @UnitTest
-class GetPurchaseUseCaseUnitTests {
-    private final GetPurchaseSut sut = Instance.create(GetPurchaseSut.class);
+class GetPurchaseDetailsUseCaseUnitTests {
+    private final GetDetailsSut sut = Instance.create(GetDetailsSut.class);
 
     @Test
     void returns_purchase_By_user_in_repository() {
@@ -28,20 +25,17 @@ class GetPurchaseUseCaseUnitTests {
                 .userData(userData)
                 .build());
 
-        Purchase purchase1 = sut.purchaseRepository().create(aNewPurchase().userId(user.id())
-                .build());
-
-        Purchase purchase2 = sut.purchaseRepository().create(aNewPurchase().userId(user.id())
+        Purchase purchase = sut.purchaseRepository().create(aNewPurchase()
+                .userId(user.id())
                 .build());
 
         // WHEN
-        ImmutableList<Purchase> userPurchases = sut.getPurchase(user.id());
+        Purchase purchaseRetrieved = sut.getDetails(purchase.id());
 
         // THEN
-
-        assertThat(userPurchases).hasSize(2)
-                .containsExactlyInAnyOrder(purchase1, purchase2);
+        assertThat(purchaseRetrieved).isNotNull();
+        assertThat(purchaseRetrieved.id()).isEqualTo(purchase.id());
+        assertThat(purchaseRetrieved.userId()).isEqualTo(user.id());
     }
-
 
 }
