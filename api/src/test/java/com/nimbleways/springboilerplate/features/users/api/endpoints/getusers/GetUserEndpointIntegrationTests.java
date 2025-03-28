@@ -69,7 +69,7 @@ class GetUserEndpointIntegrationTests extends BaseWebMvcIntegrationTests {
         }
 
         @Test
-        void getting_user_without_accessToken_returns_401() throws Exception {
+        void getting_user_without_accessRole_returns_401() throws Exception {
                 // GIVEN
                 User admin = createUserInRepo("admin", "admin", String.valueOf(Role.ADMIN));
                 User user = createUserInRepo("user1", "email1", String.valueOf(Role.USER));
@@ -89,7 +89,7 @@ class GetUserEndpointIntegrationTests extends BaseWebMvcIntegrationTests {
 
                 // WHEN & THEN
                 mockMvc
-                        .perform(get(GET_USER_ENDPOINT + nonExistentUserId.toString())
+                        .perform(get(GET_USER_ENDPOINT + nonExistentUserId)
                                 .cookie(getAccessTokenCookie(user)))
                         .andExpect(status().isNotFound()); // Supposant que votre contrôleur renvoie 404 quand l'utilisateur n'est pas trouvé
         }

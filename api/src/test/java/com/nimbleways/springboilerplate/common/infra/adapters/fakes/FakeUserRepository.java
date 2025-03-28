@@ -46,7 +46,7 @@ public class FakeUserRepository implements UserRepositoryPort, UserCredentialsRe
                     return newUser;
                 })
                 .orElseThrow(() -> new UserNotFoundInRepositoryException(userToUpdate.id().toString(),
-                        new IllegalArgumentException("ID utilisateur invalide : " + userToUpdate.id().toString())));
+                        new IllegalArgumentException("ID utilisateur invalide : " + userToUpdate.id())));
     }
 
     @Override
@@ -55,14 +55,16 @@ public class FakeUserRepository implements UserRepositoryPort, UserCredentialsRe
     }
 
     @Override
-    public Optional<User> findByID(UUID id) {
+    public User findByID(UUID id) {
         return fakeDb.userTable
                 .values()
                 .stream()
                 .filter(user -> user.user().id().equals(id)) // Filtrer par UUID
                 .findFirst() // Retourner le premier utilisateur trouvé
-                .map(FakeDatabase.UserWithPassword::user);
+                .map(FakeDatabase.UserWithPassword::user)
+                .orElseThrow(() -> new UserNotFoundInRepositoryException(id.toString(),new IllegalArgumentException("user not found")));
     }
+
 
     @Override
     public Optional<UserCredential> findUserCredentialByEmail(String email) {
@@ -79,6 +81,7 @@ public class FakeUserRepository implements UserRepositoryPort, UserCredentialsRe
                 false,
                 false);
     }
+
 
     private void ensureUserDoesNotExist(String email) {
         if (fakeDb.userTable.containsKey(email)) {

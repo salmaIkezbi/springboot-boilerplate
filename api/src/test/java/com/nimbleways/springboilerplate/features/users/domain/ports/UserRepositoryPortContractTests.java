@@ -102,8 +102,7 @@ public abstract class UserRepositoryPortContractTests {
         // Création de l'utilisateur dans le repository
         User createdUser = userRepository.create(newUser);
 
-        User retrievedUser = userRepository.findByID(createdUser.id())
-                .orElseThrow(() -> new UserNotFoundInRepositoryException(createdUser.id().toString(),new IllegalArgumentException("user not found")));
+        User retrievedUser = userRepository.findByID(createdUser.id());
 
         assertNotNull(retrievedUser);
         assertEquals(createdUser.id(), retrievedUser.id());

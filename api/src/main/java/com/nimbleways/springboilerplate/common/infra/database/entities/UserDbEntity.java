@@ -98,6 +98,7 @@ public class UserDbEntity {
                 shouldReceiveApprovalNotifications);
     }
 
+
     public UserPrincipal toUserPrincipal() {
         return new UserPrincipal(
                 id,
