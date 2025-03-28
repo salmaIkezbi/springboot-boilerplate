@@ -4,6 +4,7 @@ import com.nimbleways.springboilerplate.common.domain.ports.EventPublisherPort;
 import com.nimbleways.springboilerplate.features.authentication.domain.exceptions.AbstractAuthenticationDomainException;
 import com.nimbleways.springboilerplate.features.authentication.domain.exceptions.BadUserCredentialException;
 import com.nimbleways.springboilerplate.features.authentication.domain.exceptions.UnknownEmailException;
+import com.nimbleways.springboilerplate.features.puchases.domain.exceptions.PurchaseNotFoundException;
 import com.nimbleways.springboilerplate.features.users.domain.exceptions.EmailAlreadyExistsInRepositoryException;
 import com.nimbleways.springboilerplate.features.users.domain.exceptions.UserNotFoundInRepositoryException;
 import org.springframework.http.HttpStatus;
@@ -70,4 +71,12 @@ public class GlobalExceptionHandler extends BaseResponseEntityExceptionHandler {
         return getDefaultResponseEntity(ex, request, HttpStatus.INTERNAL_SERVER_ERROR,
                 ApiErrorCodes.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler({ PurchaseNotFoundException.class })
+    @Nullable
+    public final ResponseEntity<Object> handleException(PurchaseNotFoundException ex,
+                                                        WebRequest request) {
+        return getDefaultResponseEntity(ex, request, HttpStatus.NOT_FOUND, ApiErrorCodes.PURCHASE_NOT_FOUND_ERROR);
+    }
+
 }

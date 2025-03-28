@@ -13,7 +13,8 @@ enum ApiErrorCodes {
     EMAIL_ALREADY_EXISTS_ERROR("errors.email_already_exists"),
     EMAIL_NOT_FOUND_ERROR("errors.email_erronee_exists"),
     BAD_Credential_ERROR("errors.bad_password"),
-    USER_NOT_FOUND_ERROR("errors.user_not_found");
+    USER_NOT_FOUND_ERROR("errors.user_not_found"),
+    PURCHASE_NOT_FOUND_ERROR("errors.purchase_not_found"),;
 
     private final String code;
 
