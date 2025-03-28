@@ -93,8 +93,8 @@ class ParsableUnitTests {
     }
 
     private record InputRecord (
-        @Parsable(Checker.class)
-        String field1
+            @Parsable(Checker.class)
+            String field1
     ){}
 
     final static class Checker implements ParsableChecker {
@@ -105,8 +105,8 @@ class ParsableUnitTests {
     }
 
     private record InputRecordCheckerWithoutDefaultConstructor (
-        @Parsable(Checker.class)
-        String field1
+            @Parsable(Checker.class)
+            String field1
     ){
         final static class Checker implements ParsableChecker {
             public Checker(String param) {
