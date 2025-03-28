@@ -3,6 +3,7 @@ package com.nimbleways.springboilerplate.common.infra.adapters.fakes;
 
 import com.nimbleways.springboilerplate.common.utils.collections.Immutable;
 import com.nimbleways.springboilerplate.features.puchases.domain.entities.Purchase;
+import com.nimbleways.springboilerplate.features.puchases.domain.exceptions.PurchaseNotFoundException;
 import com.nimbleways.springboilerplate.features.puchases.domain.ports.PurchaseRepositoryPort;
 import com.nimbleways.springboilerplate.features.puchases.domain.valueobjects.NewPurchase;
 import com.nimbleways.springboilerplate.features.users.domain.exceptions.UserNotFoundInRepositoryException;
@@ -39,6 +40,15 @@ public class FakePurchaseRepository implements PurchaseRepositoryPort {
         }
         Purchase purchase = toPurchase(purchaseToCreate);
         fakeDb.purchaseTable.put(purchase.id().toString(), purchase);
+        return purchase;
+    }
+
+    @Override
+    public Purchase getDetails(UUID id) {
+        Purchase purchase = fakeDb.purchaseTable.get(id.toString());
+        if(purchase == null) {
+            throw new PurchaseNotFoundException(id.toString() , new IllegalArgumentException("purchase not found")  );
+        }
         return purchase;
     }
 

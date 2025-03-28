@@ -3,6 +3,7 @@ package com.nimbleways.springboilerplate.features.purchases.domain.ports;
 
 import com.nimbleways.springboilerplate.common.infra.adapters.TimeProvider;
 import com.nimbleways.springboilerplate.features.puchases.domain.entities.Purchase;
+import com.nimbleways.springboilerplate.features.puchases.domain.exceptions.PurchaseNotFoundException;
 import com.nimbleways.springboilerplate.features.puchases.domain.ports.PurchaseRepositoryPort;
 import com.nimbleways.springboilerplate.features.puchases.domain.valueobjects.NewPurchase;
 import com.nimbleways.springboilerplate.features.puchases.domain.valueobjects.NewPurchaseBuilder;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
@@ -82,6 +84,37 @@ public abstract class PurchaseRepositoryPortContractTests {
 
         assertEquals(UserNotFoundInRepositoryException.class, exception.getClass());
         assertEquals("User with ID " + uuid + " not found", exception.getMessage());
+
+    }
+
+    @Test
+    void getting_purchases_By_PurchaseID() {
+        // GIVEN
+        NewUser newUser = aNewUser().build();
+        User user = userRepository.create(newUser);
+        NewPurchase newPurchase = aNewPurchase(user.id()).build();
+        Purchase purchase = purchaseRepository.create(newPurchase);
+
+        // WHEN
+        Purchase retrievedPurchase = purchaseRepository.getDetails(purchase.id());
+
+        // THEN
+        assertThat(retrievedPurchase).isNotNull();
+        assertThat(retrievedPurchase.id()).isEqualTo(purchase.id());
+        assertThat(retrievedPurchase.userId()).isEqualTo(user.id());
+    }
+
+    @Test
+    void getting_purchases_By_randomPurchaseID() {
+        //GIVEN
+        UUID uuid = UUID.randomUUID();
+
+        //when
+        Exception exception = assertThrows(Exception.class,
+                () -> purchaseRepository.getDetails(uuid));
+
+        assertEquals(PurchaseNotFoundException.class, exception.getClass());
+        assertEquals("Purchase with ID " + uuid + " not found", exception.getMessage());
 
     }
 

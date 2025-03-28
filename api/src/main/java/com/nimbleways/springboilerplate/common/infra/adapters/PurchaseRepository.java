@@ -5,6 +5,7 @@ import com.nimbleways.springboilerplate.common.infra.database.entities.UserDbEnt
 import com.nimbleways.springboilerplate.common.infra.database.jparepositories.JpaPurchaseRepository;
 import com.nimbleways.springboilerplate.common.utils.collections.Immutable;
 import com.nimbleways.springboilerplate.features.puchases.domain.entities.Purchase;
+import com.nimbleways.springboilerplate.features.puchases.domain.exceptions.PurchaseNotFoundException;
 import com.nimbleways.springboilerplate.features.puchases.domain.ports.PurchaseRepositoryPort;
 import com.nimbleways.springboilerplate.features.puchases.domain.valueobjects.NewPurchase;
 import com.nimbleways.springboilerplate.features.users.domain.ports.UserRepositoryPort;
@@ -48,6 +49,14 @@ public class PurchaseRepository  implements PurchaseRepositoryPort {
         purchaseDbEntity.user(user);
         PurchaseDbEntity savedPurchaseDbEntity = jpaPurchaseRepository.saveAndFlush(purchaseDbEntity);
         return savedPurchaseDbEntity.toPurchase();
+    }
+
+    @Override
+    public Purchase getDetails(UUID id) {
+        return jpaPurchaseRepository
+                .findById(id)
+                    .orElseThrow(() -> new PurchaseNotFoundException(id.toString(), new IllegalArgumentException("purchase not found")))
+                        .toPurchase();
     }
 
 }
