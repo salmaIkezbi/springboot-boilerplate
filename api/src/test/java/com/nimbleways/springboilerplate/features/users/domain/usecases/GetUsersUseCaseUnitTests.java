@@ -2,29 +2,57 @@ package com.nimbleways.springboilerplate.features.users.domain.usecases;
 
 import static com.nimbleways.springboilerplate.features.users.domain.valueobjects.NewUserBuilder.aNewUser;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.nimbleways.springboilerplate.features.users.domain.entities.User;
+import com.nimbleways.springboilerplate.features.users.domain.exceptions.UserNotFoundInRepositoryException;
 import com.nimbleways.springboilerplate.testhelpers.annotations.UnitTest;
-import com.nimbleways.springboilerplate.features.users.domain.usecases.suts.GetUsersSut;
-
 import com.nimbleways.springboilerplate.testhelpers.utils.Instance;
-import org.eclipse.collections.api.list.ImmutableList;
+import com.nimbleways.springboilerplate.features.users.domain.usecases.suts.GetUserSut;
+import com.nimbleways.springboilerplate.testhelpers.fixtures.NewUserFixture;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
+
 @UnitTest
-class GetUsersUseCaseUnitTests {
-    private final GetUsersSut sut = Instance.create(GetUsersSut.class);
+class GetUserUseCaseUnitTests {
+
+    private final GetUserSut sut = Instance.create(GetUserSut.class);
 
     @Test
-    void returns_existing_users_in_repository() {
+    void returns_existing_user_in_repository() {
         // GIVEN
-        User user1 = sut.userRepository().create(aNewUser().build());
-        User user2 = sut.userRepository().create(aNewUser().build());
+        NewUserFixture.UserData userData = new NewUserFixture.UserData.Builder()
+                .build();
+        User user = sut.userRepository().create(aNewUser()
+                .userData(userData)
+                .build());
 
         // WHEN
-        ImmutableList<User> usersInRepository = sut.getUsers();
-
+        User retrievedUser = sut.getUser(user.id());
         // THEN
-        assertThat(usersInRepository).containsExactlyInAnyOrder(user1, user2);
+        assertThat(retrievedUser).isNotNull();
+        assertThat(retrievedUser.id()).isEqualTo(user.id());
+        assertThat(retrievedUser.name()).isEqualTo(user.name());
+        assertThat(retrievedUser.email().value()).isEqualTo(user.email().value());
     }
+
+    @Test
+    void getting_user_with_random_uuid() {
+        // GIVEN : Création d'un nouvel utilisateur avec un UUID aléatoire
+        UUID randomUuid = UUID.randomUUID();
+
+        Exception exception = assertThrows(Exception.class,
+                () -> sut.getUser(randomUuid));
+
+        assertEquals(UserNotFoundInRepositoryException.class, exception.getClass());
+        assertThat(exception.getCause()).isInstanceOf(IllegalArgumentException.class);
+        assertEquals("User with ID " + randomUuid.toString() + " not found", exception.getMessage());
+
+    }
+
+
+
 }

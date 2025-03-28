@@ -42,6 +42,7 @@ public class WebSecurityConfiguration {
         // https://docs.spring.io/spring-security/reference/servlet/architecture.html#requestcache-prevent-saved-request
         http.requestCache((cache) -> cache.requestCache(new NullRequestCache()));
 
+
         standaloneJwtAuthentication.configure(http);
 
         return http.build();

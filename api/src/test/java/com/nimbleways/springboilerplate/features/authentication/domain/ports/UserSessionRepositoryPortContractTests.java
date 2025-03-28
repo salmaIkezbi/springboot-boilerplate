@@ -18,6 +18,7 @@ import com.nimbleways.springboilerplate.features.authentication.domain.exception
 import com.nimbleways.springboilerplate.features.authentication.domain.valueobjects.RefreshToken;
 import com.nimbleways.springboilerplate.features.users.domain.entities.User;
 import com.nimbleways.springboilerplate.features.users.domain.ports.UserRepositoryPort;
+import com.nimbleways.springboilerplate.testhelpers.fixtures.NewUserFixture;
 import jakarta.transaction.Transactional;
 import java.time.Instant;
 import java.util.List;
@@ -53,7 +54,11 @@ public abstract class UserSessionRepositoryPortContractTests {
 
     @Test
     void creating_a_usersession_for_an_existing_user_succeed() {
-        User user = userRepository.create(aNewUser().build());
+        NewUserFixture.UserData userData = new NewUserFixture.UserData.Builder()
+                .build();
+        User user = userRepository.create(aNewUser()
+                .userData(userData)
+                .build());
         UserSession userSession = newUserSession(user, timeProvider.instant());
 
         userSessionRepository.create(userSession);
@@ -63,7 +68,12 @@ public abstract class UserSessionRepositoryPortContractTests {
 
     @Test
     void creating_a_usersession_with_an_existing_refreshtoken_throws_CannotCreateUserSessionInRepositoryException() {
-        User user = userRepository.create(aNewUser().email("email").build());
+        NewUserFixture.UserData userData = new NewUserFixture.UserData.Builder()
+                .email("email")
+                .build();
+        User user = userRepository.create(aNewUser()
+                .userData(userData)
+                .build());
         UserSession userSession = newUserSession(user, timeProvider.instant());
         userSessionRepository.create(userSession);
 
@@ -76,7 +86,11 @@ public abstract class UserSessionRepositoryPortContractTests {
 
     @Test
     void deleting_userSession_with_existing_refreshToken_succeed() {
-        User user = userRepository.create(aNewUser().build());
+        NewUserFixture.UserData userData = new NewUserFixture.UserData.Builder()
+                .build();
+        User user = userRepository.create(aNewUser()
+                .userData(userData)
+                .build());
         UserSession userSession = newUserSession(user, timeProvider.instant());
         userSessionRepository.create(userSession);
 
@@ -97,7 +111,11 @@ public abstract class UserSessionRepositoryPortContractTests {
 
     @Test
     void finding_by_refreshToken_does_not_return_expired_sessions() {
-        User user = userRepository.create(aNewUser().build());
+        NewUserFixture.UserData userData = new NewUserFixture.UserData.Builder()
+                .build();
+        User user = userRepository.create(aNewUser()
+                .userData(userData)
+                .build());
         UserSession userSession = newUserSession(user, timeProvider.instant());
         userSessionRepository.create(userSession);
 
@@ -111,7 +129,11 @@ public abstract class UserSessionRepositoryPortContractTests {
 
     @Test
     void finding_by_refreshToken_return_valid_session() {
-        User user = userRepository.create(aNewUser().build());
+        NewUserFixture.UserData userData = new NewUserFixture.UserData.Builder()
+                .build();
+        User user = userRepository.create(aNewUser()
+                .userData(userData)
+                .build());
         UserSession userSession = newUserSession(user, timeProvider.instant());
         userSessionRepository.create(userSession);
 
@@ -136,7 +158,11 @@ public abstract class UserSessionRepositoryPortContractTests {
 
     @Test
     void deleting_expired_sessions_keeps_valid_ones() {
-        User user = userRepository.create(aNewUser().build());
+        NewUserFixture.UserData userData = new NewUserFixture.UserData.Builder()
+                .build();
+        User user = userRepository.create(aNewUser()
+                .userData(userData)
+                .build());
         Instant now = timeProvider.instant();
         UserSession expiredSession = newUserSession(user, now.minusMillis(1));
         UserSession firstValidSession = newUserSession(user, now);

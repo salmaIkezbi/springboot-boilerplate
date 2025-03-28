@@ -1,0 +1,22 @@
+databaseChangeLog:
+- changeSet:
+    id: 1742600621780-1
+    author: Baraka (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            name: shouldReceiveApprovalNotifications
+            type: BOOLEAN
+        tableName: users
+- changeSet:
+    id: 1742600621780-2
+    author: Baraka (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            name: shouldReceiveMailNotifications
+            type: BOOLEAN
+        tableName: users
+
