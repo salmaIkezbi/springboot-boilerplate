@@ -8,7 +8,6 @@ import com.nimbleways.springboilerplate.features.users.domain.exceptions.EmailAl
 import com.nimbleways.springboilerplate.features.users.domain.exceptions.UserNotFoundInRepositoryException;
 import com.nimbleways.springboilerplate.features.users.domain.valueobjects.NewUser;
 import com.nimbleways.springboilerplate.features.users.domain.valueobjects.NewUserBuilder;
-import com.nimbleways.springboilerplate.features.users.domain.valueobjects.UpdatedUser;
 import com.nimbleways.springboilerplate.testhelpers.fixtures.NewUserFixture;
 import jakarta.transaction.Transactional;
 import java.util.List;
@@ -97,6 +96,24 @@ public abstract class UserRepositoryPortContractTests {
                 NewUser newUser = aNewUser().userData(userData)
                                 .build();
 
+                // Création de l'utilisateur dans le repository
+                User createdUser = userRepository.create(newUser);
+
+                User retrievedUser = userRepository.findByID(createdUser.id());
+
+                assertNotNull(retrievedUser);
+                assertEquals(createdUser.id(), retrievedUser.id());
+                assertEquals(createdUser.email(), retrievedUser.email());
+        }
+
+        @Test
+        void updating_and_getting_user_with_random_uuid() {
+                // GIVEN : Création d'un nouvel utilisateur avec un UUID aléatoire
+                NewUserFixture.UserData userData = new NewUserFixture.UserData.Builder()
+                                .email("email")
+                                .build();
+                NewUser newUser = aNewUser().userData(userData)
+                                .build();
                 // Création de l'utilisateur dans le repository
                 userRepository.create(newUser);
 

@@ -68,7 +68,7 @@ class GetUserEndpointIntegrationTests extends BaseWebMvcIntegrationTests {
         }
 
         @Test
-        void getting_user_without_accessToken_returns_401() throws Exception {
+        void getting_user_without_accessRole_returns_401() throws Exception {
                 // GIVEN
                 User admin = createUserInRepo("admin", "admin", String.valueOf(Role.ADMIN));
                 User user = createUserInRepo("user1", "email1", String.valueOf(Role.USER));

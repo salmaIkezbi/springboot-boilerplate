@@ -28,6 +28,7 @@ public class GetPurchaseSut {
 
     private final FakeUserRepository userRepository;
 
+
     public ImmutableList<Purchase> getPurchase(UUID id) {
         return useCase.handle(id);
     }

@@ -1,6 +1,7 @@
 package com.nimbleways.springboilerplate.features.users.domain.entities;
 
 import com.nimbleways.springboilerplate.common.domain.valueobjects.Email;
+
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -14,4 +15,5 @@ public record User(
                 LocalDate employmentDate,
                 Boolean shouldReceiveMailNotifications,
                 Boolean shouldReceiveApprovalNotifications ) {
+
 }

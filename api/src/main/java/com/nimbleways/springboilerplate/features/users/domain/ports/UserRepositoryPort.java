@@ -5,9 +5,6 @@ import com.nimbleways.springboilerplate.features.users.domain.valueobjects.NewUs
 import com.nimbleways.springboilerplate.features.users.domain.valueobjects.UpdatedUser;
 import org.eclipse.collections.api.list.ImmutableList;
 
-import java.util.Optional;
-import java.util.UUID;
-
 import java.util.UUID;
 
 public interface UserRepositoryPort {

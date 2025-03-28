@@ -2,7 +2,6 @@ package com.nimbleways.springboilerplate.features.users.domain.usecases;
 
 import com.nimbleways.springboilerplate.common.domain.valueobjects.EncodedPassword;
 import com.nimbleways.springboilerplate.features.users.domain.entities.User;
-import com.nimbleways.springboilerplate.features.users.domain.exceptions.UserNotFoundInRepositoryException;
 import com.nimbleways.springboilerplate.features.users.domain.usecases.suts.UpdateSut;
 import com.nimbleways.springboilerplate.features.users.domain.usecases.updateuser.UpdateUserCommand;
 import com.nimbleways.springboilerplate.testhelpers.annotations.UnitTest;
@@ -83,10 +82,7 @@ class UpdateUseCaseUnitTests {
         }
 
         private User getUser(UpdateUserCommand updateUserCommand) {
-                User user = sut.userRepository().findByID(updateUserCommand.id())
-                                .orElseThrow(() -> new UserNotFoundInRepositoryException(
-                                                updateUserCommand.id().toString(),
-                                                new IllegalArgumentException("user not found")));
+                User user = sut.userRepository().findByID(updateUserCommand.id());
                 return new User(
                                 user.id(),
                                 user.name(),

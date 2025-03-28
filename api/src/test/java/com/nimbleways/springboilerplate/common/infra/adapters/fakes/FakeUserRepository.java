@@ -7,7 +7,6 @@ import com.nimbleways.springboilerplate.features.authentication.domain.ports.Use
 import com.nimbleways.springboilerplate.features.users.domain.entities.User;
 import com.nimbleways.springboilerplate.features.users.domain.exceptions.EmailAlreadyExistsInRepositoryException;
 import com.nimbleways.springboilerplate.features.users.domain.exceptions.UserNotFoundInRepositoryException;
-import com.nimbleways.springboilerplate.features.users.domain.exceptions.UserNotFoundInRepositoryException;
 import com.nimbleways.springboilerplate.features.users.domain.ports.UserRepositoryPort;
 import com.nimbleways.springboilerplate.features.users.domain.valueobjects.NewUser;
 import java.util.Optional;
@@ -52,7 +51,7 @@ public class FakeUserRepository implements UserRepositoryPort, UserCredentialsRe
                     return newUser;
                 })
                 .orElseThrow(() -> new UserNotFoundInRepositoryException(userToUpdate.id().toString(),
-                        new IllegalArgumentException("ID utilisateur invalide : " + userToUpdate.id().toString())));
+                        new IllegalArgumentException("ID utilisateur invalide : " + userToUpdate.id())));
     }
 
     @Override
