@@ -4,6 +4,6 @@ import com.nimbleways.springboilerplate.common.domain.exceptions.AbstractDomainE
 
 public class PurchaseNotFoundException extends AbstractDomainException {
     public PurchaseNotFoundException(String id, Throwable cause) {
-        super("Purchase with ID %s not found".formatted(id), cause);
+        super("Purchase with ID "+ id + " not found", cause);
     }
 }
