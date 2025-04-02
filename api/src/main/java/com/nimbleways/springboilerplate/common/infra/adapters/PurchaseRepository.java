@@ -8,6 +8,7 @@ import com.nimbleways.springboilerplate.features.puchases.domain.entities.Purcha
 import com.nimbleways.springboilerplate.features.puchases.domain.exceptions.PurchaseNotFoundException;
 import com.nimbleways.springboilerplate.features.puchases.domain.ports.PurchaseRepositoryPort;
 import com.nimbleways.springboilerplate.features.puchases.domain.valueobjects.NewPurchase;
+import com.nimbleways.springboilerplate.features.puchases.domain.valueobjects.PurchaseRating;
 import com.nimbleways.springboilerplate.features.users.domain.ports.UserRepositoryPort;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.springframework.stereotype.Component;
@@ -58,6 +59,18 @@ public class PurchaseRepository  implements PurchaseRepositoryPort {
                     .orElseThrow(() -> new PurchaseNotFoundException(id.toString(), new IllegalArgumentException("purchase not found")))
                         .toPurchase();
     }
+
+    @Override
+    public Purchase ratePurchase(PurchaseRating purchaseRating) {
+        PurchaseDbEntity updatedPurchase = jpaPurchaseRepository.findById(purchaseRating.purchaseId())
+                .orElseThrow(() -> new PurchaseNotFoundException(purchaseRating.purchaseId().toString(), new IllegalArgumentException("purchase not found")));
+
+        updatedPurchase.rate(purchaseRating.rating());
+
+        PurchaseDbEntity savedPurchaseDbEntity = jpaPurchaseRepository.saveAndFlush(updatedPurchase);
+        return savedPurchaseDbEntity.toPurchase();
+    }
+
 
 }
 

@@ -6,6 +6,7 @@ import com.nimbleways.springboilerplate.features.puchases.domain.entities.Purcha
 import com.nimbleways.springboilerplate.features.puchases.domain.exceptions.PurchaseNotFoundException;
 import com.nimbleways.springboilerplate.features.puchases.domain.ports.PurchaseRepositoryPort;
 import com.nimbleways.springboilerplate.features.puchases.domain.valueobjects.NewPurchase;
+import com.nimbleways.springboilerplate.features.puchases.domain.valueobjects.PurchaseRating;
 import com.nimbleways.springboilerplate.features.users.domain.exceptions.UserNotFoundInRepositoryException;
 import com.nimbleways.springboilerplate.features.users.domain.ports.UserRepositoryPort;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +54,34 @@ public class FakePurchaseRepository implements PurchaseRepositoryPort {
     }
 
     @Override
+    public Purchase ratePurchase(PurchaseRating purchaseRating) {
+        return fakeDb.purchaseTable
+                .values()
+                .stream()
+                .filter(purchase -> purchase.id().equals(purchaseRating.purchaseId()))
+                .findFirst()
+                .map(existingPurchase -> {
+                    Purchase updatedpurchase = new Purchase(
+                            existingPurchase.id(),
+                            existingPurchase.userId(),
+                            existingPurchase.brand(),
+                            existingPurchase.model(),
+                            existingPurchase.price(),
+                            existingPurchase.store(),
+                            existingPurchase.pathImage(),
+                            purchaseRating.rating()
+                    );
+                    fakeDb.purchaseTable.remove(existingPurchase.id().toString());
+                    fakeDb.purchaseTable.put(existingPurchase.id().toString(),updatedpurchase);
+                    return updatedpurchase;
+                })
+                .orElseThrow(() -> new PurchaseNotFoundException(purchaseRating.purchaseId().toString(),
+                        new IllegalArgumentException("ID purchase invalide : " + purchaseRating.purchaseId())));
+
+
+    }
+
+    @Override
     public ImmutableList<Purchase> findAll() {
         return Immutable.list.ofAll(fakeDb.purchaseTable.values());
     }
@@ -66,7 +95,8 @@ public class FakePurchaseRepository implements PurchaseRepositoryPort {
                 purchaseToCreate.model(),
                 purchaseToCreate.price(),
                 purchaseToCreate.store(),
-                purchaseToCreate.pathImages()
+                purchaseToCreate.pathImages(),
+                0
         );
     }
 
