@@ -30,5 +30,5 @@ databaseChangeLog:
       file: changelog/20250321-234318-add-should-receive-approval-and-mail-notifications-columns.yaml
       relativeToChangelogFile: true
   - include:
-      file: changelog/20250402-144422-create-purchase-table.yaml
+      file: changelog/20250402-183019-create-purchase-table.yaml
       relativeToChangelogFile: true
