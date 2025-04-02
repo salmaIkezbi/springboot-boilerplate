@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.nimbleways.springboilerplate.common.infra.database.entities.UserDbEntity;
 import com.nimbleways.springboilerplate.testhelpers.annotations.SetupDatabase;
 import java.time.Instant;
+import java.time.LocalDate;
+
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -34,7 +36,7 @@ class TransactionalExampleIntegrationTests {
     @Order(1)
     @Transactional(propagation = Propagation.NEVER)
     void add_user_without_transaction() {
-        userRepository.save(createUser("user1", "pwd1"));
+        userRepository.save(createUser("user1", "pwd1" , "ADMIN", LocalDate.parse("2025-03-17")));
         // THEN
         assertThat(userRepository.findAll()).hasSize(1);
     }
@@ -46,7 +48,7 @@ class TransactionalExampleIntegrationTests {
     @Order(2)
     void add_a_second_user_with_transaction() {
         // WHEN
-        userRepository.save(createUser("user2", "pwd2"));
+        userRepository.save(createUser("user2", "pwd2" , "USER",LocalDate.parse("2025-03-17")));
         // THEN
         assertThat(userRepository.findAll()).hasSize(2);
     }
@@ -55,7 +57,7 @@ class TransactionalExampleIntegrationTests {
     @Order(3)
     void add_another_second_user_with_transaction() {
         // WHEN
-        userRepository.save(createUser("user3", "pwd3"));
+        userRepository.save(createUser("user3", "pwd3" , "USER" , LocalDate.parse("2025-03-17")));
         // THEN
         assertThat(userRepository.findAll()).hasSize(2);
     }
@@ -78,11 +80,13 @@ class TransactionalExampleIntegrationTests {
     }
 
     @NotNull
-    private UserDbEntity createUser(String email, String password) {
+    private UserDbEntity createUser(String email, String password , String role , LocalDate employmentDate) {
         UserDbEntity user = new UserDbEntity();
         user.email(email);
         user.password(password);
         user.name(email);
+        user.role(role);
+        user.employmentDate(employmentDate);
         user.createdAt(Instant.now());
         return user;
     }

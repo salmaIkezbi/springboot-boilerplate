@@ -27,6 +27,7 @@ import com.nimbleways.springboilerplate.features.authentication.domain.usecases.
 import java.time.Instant;
 import java.util.Optional;
 
+import com.nimbleways.springboilerplate.testhelpers.fixtures.NewUserFixture;
 import com.nimbleways.springboilerplate.testhelpers.utils.Instance;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.junit.jupiter.api.Test;
@@ -124,7 +125,7 @@ class LoginUseCaseUnitTests {
     void login_with_good_email_and_bad_password_throws_BadUserCredentialException() {
         // GIVEN
         LoginCommand loginCommand = aLoginCommand("bad_password");
-        sut.userRepository().create(getUser(loginCommand, "password"));
+        sut.userRepository().create(getUser(loginCommand, "password","USER"));
 
         // WHEN
         Exception ex = assertThrows(Exception.class, () -> sut.login(loginCommand));
@@ -138,15 +139,19 @@ class LoginUseCaseUnitTests {
         return sut.tokenGenerator().decodeWithoutExpirationValidation(tokens.accessToken());
     }
 
-    private static NewUser getUser(LoginCommand loginCommand, String password) {
-        return aNewUser()
+    private static NewUser getUser(LoginCommand loginCommand, String password, String role) {
+        NewUserFixture.UserData userData = new NewUserFixture.UserData.Builder()
                 .email(loginCommand.email())
                 .plainPassword(password)
+                .role(role)
+                .build();
+        return aNewUser()
+                .userData(userData)
                 .build();
     }
 
     private static NewUser getUser(LoginCommand loginCommand) {
-        return getUser(loginCommand, loginCommand.password());
+        return getUser(loginCommand, loginCommand.password(), "USER");
     }
 
     private <T extends Event> T assertEventPublished(Class<T> eventType) {
