@@ -7,6 +7,7 @@ import com.nimbleways.springboilerplate.features.puchases.domain.exceptions.Purc
 import com.nimbleways.springboilerplate.features.puchases.domain.ports.PurchaseRepositoryPort;
 import com.nimbleways.springboilerplate.features.puchases.domain.valueobjects.NewPurchase;
 import com.nimbleways.springboilerplate.features.puchases.domain.valueobjects.NewPurchaseBuilder;
+import com.nimbleways.springboilerplate.features.puchases.domain.valueobjects.PurchaseRating;
 import com.nimbleways.springboilerplate.features.users.domain.entities.User;
 import com.nimbleways.springboilerplate.features.users.domain.exceptions.UserNotFoundInRepositoryException;
 import com.nimbleways.springboilerplate.features.users.domain.ports.UserRepositoryPort;
@@ -118,6 +119,42 @@ public abstract class PurchaseRepositoryPortContractTests {
 
     }
 
+    @Test
+    void ratting_purchase_By_PurchaseID() {
+        // GIVEN
+        NewUser newUser = aNewUser().build();
+        User user = userRepository.create(newUser);
+        NewPurchase newPurchase = aNewPurchase(user.id()).build();
+        Purchase purchase = purchaseRepository.create(newPurchase);
+        PurchaseRating purchaseRating = new PurchaseRating(purchase.id(),4);
+
+        // WHEN
+        Purchase updatedPurchase = purchaseRepository.ratePurchase(purchaseRating);
+
+        // THEN
+        assertThat(updatedPurchase).isNotNull();
+        assertThat(updatedPurchase.id()).isEqualTo(purchase.id());
+        assertThat(updatedPurchase.rate()).isEqualTo(purchaseRating.rating());
+    }
+
+    @Test
+    void rate_non_existing_purchase() {
+        //GIVEN
+        UUID uuid = UUID.randomUUID();
+
+        PurchaseRating purchaseRating = new PurchaseRating(uuid,4);
+
+        //when
+        Exception exception = assertThrows(Exception.class,
+                () -> purchaseRepository.ratePurchase(purchaseRating));
+
+        assertEquals(PurchaseNotFoundException.class, exception.getClass());
+        assertEquals("Purchase with ID " + uuid + " not found", exception.getMessage());
+
+    }
+
+
+
     private static NewUserBuilder aNewUser() {
         NewUserFixture.UserData userData = new NewUserFixture.UserData.Builder()
                 .timeProvider(TimeProvider.UTC)
@@ -137,7 +174,8 @@ public abstract class PurchaseRepositoryPortContractTests {
                 purchase.model(),
                 purchase.price(),
                 purchase.store(),
-                purchase.pathImage());
+                purchase.pathImage(),
+                0);
     }
 
 
