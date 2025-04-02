@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @RestController
 public class GetPurchaseEndpoint {
-    private static final String URL = "/purchase";
+    private static final String URL = "/purchases";
 
     private final GetPurchaseUseCase getPurchaseUseCase;
 

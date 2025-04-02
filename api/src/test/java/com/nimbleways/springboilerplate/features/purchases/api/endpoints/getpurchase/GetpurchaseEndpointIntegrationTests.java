@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = GetPurchaseEndpoint.class)
 @Import(GetPurchaseSut.class)
 class GetpurchaseEndpointIntegrationTests extends BaseWebMvcIntegrationTests {
-    public static final String GET_PURCHASE_ENDPOINT = "/purchase/";
+    public static final String GET_PURCHASE_ENDPOINT = "/purchases/";
 
     @Autowired
     private GetPurchaseSut getPurchaseSut;
