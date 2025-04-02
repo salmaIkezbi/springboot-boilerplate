@@ -12,7 +12,8 @@ public record Purchase(
         String model,
         Double price,
         String store,
-        ImmutableList<String> pathImage
+        ImmutableList<String> pathImage,
+        Integer rate
 ) {
 
 }

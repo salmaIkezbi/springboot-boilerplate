@@ -17,7 +17,7 @@ public class NewPurchaseFixture {
                                            String model,
                                            Double price,
                                            String store,
-                                           ImmutableList<String> pathImage) {
+                                           ImmutableList<String> pathImage, Integer rate) {
         UUID id = UUID.randomUUID();
         String brandValue = requireNonNullElse(brand, "brand-" + id);
         String modelValue = requireNonNullElse(model, "model-" + id);
@@ -25,7 +25,8 @@ public class NewPurchaseFixture {
         String storeValue = requireNonNullElse(store, "store-" + id);
         UUID userIdValue = requireNonNullElse(userId, id);
         ImmutableList<String> pathImageValue = requireNonNullElse(pathImage, DEFAULT_IMAGES);
+        Integer rateValue = requireNonNullElse(rate, 0);
 
-        return new NewPurchase(userIdValue, brandValue, modelValue, priceValue, storeValue, pathImageValue);
+        return new NewPurchase(userIdValue, brandValue, modelValue, priceValue, storeValue, pathImageValue, rateValue);
     }
 }

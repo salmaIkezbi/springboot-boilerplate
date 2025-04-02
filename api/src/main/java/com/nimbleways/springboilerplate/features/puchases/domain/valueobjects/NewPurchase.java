@@ -10,6 +10,7 @@ public record NewPurchase(
         String model,
         Double price,
         String store,
-        ImmutableList<String> pathImages
+        ImmutableList<String> pathImages,
+        Integer rate
 ) {
 }

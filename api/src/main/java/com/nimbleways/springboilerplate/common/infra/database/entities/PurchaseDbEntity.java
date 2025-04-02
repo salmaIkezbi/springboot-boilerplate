@@ -44,6 +44,11 @@ public class PurchaseDbEntity {
     @NotNull
     private String store;
 
+    @Column(name = "rate", columnDefinition = "INTEGER DEFAULT 0")
+    @NotNull
+    private Integer rate;
+
+
     @ElementCollection
     @CollectionTable(name = "purchase_images", joinColumns = @JoinColumn(name = "purchase_id"))
     @Column(name = "image_paths")
@@ -64,7 +69,8 @@ public class PurchaseDbEntity {
                 model,
                 price,
                 store,
-                Immutable.list.ofAll(imagePaths()));
+                Immutable.list.ofAll(imagePaths()),
+                rate);
     }
 
     public static PurchaseDbEntity from(NewPurchase newPurchase) {
@@ -74,6 +80,7 @@ public class PurchaseDbEntity {
         purchaseDbEntity.price(newPurchase.price());
         purchaseDbEntity.store(newPurchase.store());
         purchaseDbEntity.imagePaths(newPurchase.pathImages().toList());
+        purchaseDbEntity.rate(newPurchase.rate());
         return purchaseDbEntity;
     }
 }
