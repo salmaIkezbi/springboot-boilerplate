@@ -1,0 +1,14 @@
+databaseChangeLog:
+- changeSet:
+    id: 1742222127412-1
+    author: Baraka (generated)
+    changes:
+    - addColumn:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: employment_date
+            type: date
+        tableName: users
+
