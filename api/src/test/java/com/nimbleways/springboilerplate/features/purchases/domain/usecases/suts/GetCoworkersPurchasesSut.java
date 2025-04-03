@@ -23,9 +23,9 @@ public class GetCoworkersPurchasesSut {
     @Getter(AccessLevel.NONE)
     private final GetCoworkersPurchasesUseCase useCase;
 
-    private final FakePurchaseRepository fakePurchaseRepository;
+    private final FakePurchaseRepository purchaseRepository;
 
-    private final FakeUserRepository fakeUserRepository;
+    private final FakeUserRepository userRepository;
 
     public ImmutableList<Purchase> getCoworkersPurchases(UUID id){ return useCase.handle(id);}
 }

@@ -22,20 +22,20 @@ class GetCoworkersPurchasesUseCaseUnitTests {
         // GIVEN
         NewUserFixture.UserData userData1 = new NewUserFixture.UserData.Builder()
                 .build();
-        User owner = sut.fakeUserRepository().create(aNewUser()
+        User owner = sut.userRepository().create(aNewUser()
                 .userData(userData1)
                 .build());
 
         NewUserFixture.UserData userData2 = new NewUserFixture.UserData.Builder()
                 .build();
-        User notOwner = sut.fakeUserRepository().create(aNewUser()
+        User notOwner = sut.userRepository().create(aNewUser()
                 .userData(userData2)
                 .build());
 
-        Purchase purchase1 = sut.fakePurchaseRepository().create(aNewPurchase().userId(owner.id())
+        Purchase purchase1 = sut.purchaseRepository().create(aNewPurchase().userId(owner.id())
                 .build());
 
-        sut.fakePurchaseRepository().create(aNewPurchase().userId(notOwner.id())
+        sut.purchaseRepository().create(aNewPurchase().userId(notOwner.id())
                 .build());
 
 
