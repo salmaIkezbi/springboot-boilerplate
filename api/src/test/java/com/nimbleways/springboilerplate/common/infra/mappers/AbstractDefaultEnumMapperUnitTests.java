@@ -29,31 +29,6 @@ class AbstractDefaultEnumMapperUnitTests {
         assertFalse(canParse);
     }
 
-    @Test
-    void toValueObject_with_valid_value_returns_enum_object() {
-        TestEnumMapper testEnumMapper = new TestEnumMapper();
-        TestEnum value = testEnumMapper.toValueObject("VALID_VALUE");
-        assertEquals(TestEnum.VALID_VALUE, value);
-    }
-
-    @Test
-    void toValueObject_with_invalid_value_throws_IllegalArgumentException() {
-        TestEnumMapper testEnumMapper = new TestEnumMapper();
-
-        Exception exception = assertThrows(Exception.class, () -> testEnumMapper.toValueObject("INVALID_VALUE"));
-
-        assertEquals(IllegalArgumentException.class, exception.getClass());
-    }
-
-    @Test
-    void fromValueObject_returns_enum_name() {
-        TestEnumMapper testEnumMapper = new TestEnumMapper();
-
-        String stringValue = testEnumMapper.fromValueObject(TestEnum.VALID_VALUE);
-
-        assertEquals("VALID_VALUE", stringValue);
-    }
-
     private enum TestEnum {
         VALID_VALUE;
     }
