@@ -82,6 +82,15 @@ public class FakePurchaseRepository implements PurchaseRepositoryPort {
     }
 
     @Override
+    public ImmutableList<Purchase> FindByUser_IdNot(UUID id) {
+        return Immutable.list.ofAll(fakeDb.purchaseTable
+                .values()
+                .stream()
+                .filter(purchase -> ! purchase.userId().equals(id))
+                .collect(Collectors.toList()));
+    }
+
+    @Override
     public ImmutableList<Purchase> findAll() {
         return Immutable.list.ofAll(fakeDb.purchaseTable.values());
     }

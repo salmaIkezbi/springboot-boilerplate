@@ -14,4 +14,5 @@ public interface PurchaseRepositoryPort {
     Purchase create(NewPurchase purchaseToCreate);
     Purchase getDetails(UUID id);
     Purchase ratePurchase(PurchaseRating purchaseRating);
+    ImmutableList<Purchase> FindByUser_IdNot(UUID id);
 }

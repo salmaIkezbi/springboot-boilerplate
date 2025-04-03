@@ -10,5 +10,5 @@ import java.util.UUID;
 @Repository
 public interface JpaPurchaseRepository extends JpaRepository<PurchaseDbEntity, UUID> {
     Optional<PurchaseDbEntity> findByuserId(UUID userId);
-
+    Iterable<PurchaseDbEntity> findByUserIdNot(UUID id);
 }

@@ -153,7 +153,36 @@ public abstract class PurchaseRepositoryPortContractTests {
 
     }
 
+    @Test
+    void shouldFindPurchasesNotOwnedByGivenUserId() {
+        // GIVEN
+        NewUser newUser1 = aNewUser().build();
+        NewUser newUser2 = aNewUser().build();
+        NewUser newUser3 = aNewUser().build();
+        NewUser newUser4 = aNewUser().build();
 
+
+        User owner1 = userRepository.create(newUser1);
+        Purchase owner1purchase = purchaseRepository.create(aNewPurchase(owner1.id()).build());
+
+        User owner2 = userRepository.create(newUser2);
+        Purchase owner2purchase = purchaseRepository.create(aNewPurchase(owner2.id()).build());
+
+        User owner3 = userRepository.create(newUser3);
+        Purchase owner3purchase = purchaseRepository.create(aNewPurchase(owner3.id()).build());
+
+        User notoOwner = userRepository.create(newUser4);
+        purchaseRepository.create(aNewPurchase(notoOwner.id()).build());
+
+        // WHEN
+        ImmutableList<Purchase> retrievedPurchases = purchaseRepository.FindByUser_IdNot(notoOwner.id());
+
+        // THEN
+        assertThat(retrievedPurchases).isNotEmpty();
+        assertThat(retrievedPurchases).hasSize(3)
+                .containsExactlyInAnyOrder(owner1purchase, owner2purchase, owner3purchase);
+
+    }
 
     private static NewUserBuilder aNewUser() {
         NewUserFixture.UserData userData = new NewUserFixture.UserData.Builder()

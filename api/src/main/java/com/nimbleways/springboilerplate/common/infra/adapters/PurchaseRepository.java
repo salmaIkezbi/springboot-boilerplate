@@ -71,6 +71,11 @@ public class PurchaseRepository  implements PurchaseRepositoryPort {
         return savedPurchaseDbEntity.toPurchase();
     }
 
+    @Override
+    public ImmutableList<Purchase> FindByUser_IdNot(UUID id) {
+        return Immutable.collectList(jpaPurchaseRepository.findByUserIdNot(id), PurchaseDbEntity::toPurchase);
+    }
+
 
 }
 
