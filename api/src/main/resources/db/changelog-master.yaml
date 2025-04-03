@@ -11,7 +11,6 @@ databaseChangeLog:
   - include:
       file: changelog/20211101151949-add-roles-table.yaml
       relativeToChangelogFile: true
-
   - include:
       file: changelog/20231204-124948-create-user-session-table.yaml
       relativeToChangelogFile: true
@@ -20,4 +19,16 @@ databaseChangeLog:
       relativeToChangelogFile: true
   - include:
       file: changelog/20250313-122708-add-email.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changelog/20250317-140725-replace-roles-collections-with-role-string.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changelog/20250317-143507-add-column-employmentdate.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changelog/20250321-234318-add-should-receive-approval-and-mail-notifications-columns.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: changelog/20250402-183019-create-purchase-table.yaml
       relativeToChangelogFile: true

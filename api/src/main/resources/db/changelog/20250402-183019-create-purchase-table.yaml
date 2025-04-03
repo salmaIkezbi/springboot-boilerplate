@@ -1,0 +1,88 @@
+databaseChangeLog:
+- changeSet:
+    id: 1743618653250-1
+    author: Baraka (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: purchase_id
+            type: UUID
+        - column:
+            name: image_paths
+            type: VARCHAR(255)
+        tableName: purchase_images
+- changeSet:
+    id: 1743618653250-2
+    author: Baraka (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: purchasesPK
+            name: id
+            type: UUID
+        - column:
+            constraints:
+              nullable: false
+            name: brand
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: model
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: price
+            type: FLOAT(53)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: 0
+            name: rate
+            type: INTEGER
+        - column:
+            constraints:
+              nullable: false
+            name: store
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: user_id
+            type: UUID
+        tableName: purchases
+- changeSet:
+    id: 1743618653250-3
+    author: Baraka (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: purchase_id
+        baseTableName: purchase_images
+        constraintName: FKcdsglnn1s4sunl6g60dw98ksx
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: purchases
+        validate: true
+- changeSet:
+    id: 1743618653250-4
+    author: Baraka (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: purchases
+        constraintName: FKm0ndjymn9p747pfp4515pio8i
+        deferrable: false
+        initiallyDeferred: false
+        referencedColumnNames: id
+        referencedTableName: users
+        validate: true
+
