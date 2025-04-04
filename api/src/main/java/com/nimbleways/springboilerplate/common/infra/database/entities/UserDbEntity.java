@@ -61,6 +61,14 @@ public class UserDbEntity {
     @NotNull
     private LocalDate employmentDate;
 
+    @Column(name = "shouldReceiveApprovalNotifications")
+    @NotNull
+    private Boolean shouldReceiveApprovalNotifications = false;
+
+    @Column(name = "shouldReceiveMailNotifications")
+    @NotNull
+    private Boolean shouldReceiveMailNotifications = false;
+
     public static UserDbEntity from(NewUser newUser) {
         String role = newUser.role();
         final UserDbEntity userDbEntity = new UserDbEntity();
@@ -79,7 +87,9 @@ public class UserDbEntity {
                 name,
                 new Email(email),
                 createdAt,
-                role, employmentDate);
+                role, employmentDate,
+                shouldReceiveMailNotifications,
+                shouldReceiveApprovalNotifications);
     }
 
     public UserPrincipal toUserPrincipal() {

@@ -25,13 +25,17 @@ public class UserFixture {
             @Nullable String email,
             @Nullable TimeProviderPort timeProvider,
             @Nullable String role,
-            @Nullable LocalDate employmentDate) {
+            @Nullable LocalDate employmentDate,
+            @Nullable Boolean shouldReceiveMailNotifications,
+            @Nullable Boolean shouldReceiveApprovalNotifications) {
         UUID idValue = requireNonNullElse(id, UUID.randomUUID());
         String nameValue = requireNonNullElse(name, "name");
         String emailValue = requireNonNullElse(email, "email");
         TimeProviderPort timeProviderValue = requireNonNullElse(timeProvider, DEFAULT_TIME_PROVIDER);
         String roleValue = requireNonNullElse(role, DEFAULT_ROLE);
         LocalDate employmentDateValue = requireNonNullElse(employmentDate, DEFAULT_employment_Date);
+        Boolean shouldReceiveMailNotificationsValue = requireNonNullElse(shouldReceiveMailNotifications , false);
+        Boolean shouldReceiveApprovalNotificationsValue = requireNonNullElse(shouldReceiveApprovalNotifications, false);
 
         return new User(
                 idValue,
@@ -39,6 +43,8 @@ public class UserFixture {
                 new Email(emailValue),
                 timeProviderValue.instant(),
                 roleValue,
-                employmentDateValue);
+                employmentDateValue,
+                shouldReceiveMailNotificationsValue,
+                shouldReceiveApprovalNotificationsValue);
     }
 }

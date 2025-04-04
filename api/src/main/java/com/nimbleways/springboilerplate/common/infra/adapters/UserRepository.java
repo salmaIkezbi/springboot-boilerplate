@@ -13,6 +13,7 @@ import com.nimbleways.springboilerplate.features.users.domain.valueobjects.NewUs
 import java.util.Optional;
 import java.util.UUID;
 
+import com.nimbleways.springboilerplate.features.users.domain.valueobjects.UpdatedUser;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
@@ -35,6 +36,17 @@ public class UserRepository implements UserRepositoryPort, UserCredentialsReposi
             throw new EmailAlreadyExistsInRepositoryException(userToCreate.email().value(), ex);
         }
         return savedUserDbEntity.toUser();
+    }
+
+    @Override
+    public User update(UpdatedUser userToUpdate) {
+        return jpaUserRepository.findById(userToUpdate.id())
+                .map(existingUser -> {existingUser.password(userToUpdate.encodedPassword().value());
+                    existingUser.shouldReceiveMailNotifications(userToUpdate.shouldReceiveMailNotifications());
+                    existingUser.shouldReceiveApprovalNotifications(userToUpdate.shouldReceiveApprovalNotifications());
+                    return jpaUserRepository.save(existingUser);
+                })
+                .orElseThrow(() -> new UserNotFoundInRepositoryException(userToUpdate.id().toString(), new IllegalArgumentException("bad user id "))).toUser();
     }
 
     @Override
