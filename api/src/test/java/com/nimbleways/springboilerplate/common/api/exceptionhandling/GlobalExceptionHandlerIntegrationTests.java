@@ -11,6 +11,7 @@ import com.nimbleways.springboilerplate.features.authentication.domain.exception
 import com.nimbleways.springboilerplate.features.authentication.domain.exceptions.UnknownEmailException;
 import com.nimbleways.springboilerplate.features.authentication.domain.valueobjects.AccessToken;
 import com.nimbleways.springboilerplate.features.users.domain.exceptions.EmailAlreadyExistsInRepositoryException;
+import com.nimbleways.springboilerplate.features.users.domain.exceptions.UserNotFoundInRepositoryException;
 import com.nimbleways.springboilerplate.testhelpers.baseclasses.BaseWebMvcIntegrationTests;
 import com.nimbleways.springboilerplate.testhelpers.utils.ClassFinder;
 import java.util.List;
@@ -222,6 +223,13 @@ class GlobalExceptionHandlerIntegrationTests extends BaseWebMvcIntegrationTests 
                         HttpStatus.BAD_REQUEST, """
                                 {"type":"about:blank","title":"errors.email_already_exists","status":400,
                                 "detail":"errors.email_already_exists","instance":"/exception-handling/throw"}"""),
+
+                Arguments.of(
+                        new UserNotFoundInRepositoryException(
+                                "", new IllegalArgumentException("")),
+                        HttpStatus.NOT_FOUND, """
+                                {"type":"about:blank","title":"errors.user_not_found","status":404,
+                                "detail":"errors.user_not_found","instance":"/exception-handling/throw"}"""),
 
                 Arguments.of(
                         new RefreshAndAccessTokensMismatchException(UUID.randomUUID(), UUID.randomUUID()),

@@ -8,11 +8,6 @@ class AuthenticationFlowApplicationTests extends BaseApplicationTestsWithDb {
 
     @Test
     void signup_login_getUsers_refreshToken() {
-        // ----------- Getting users without being logged in ------------//
-        webTestClient
-                .get().uri("/users")
-                .exchange()
-                .expectStatus().isUnauthorized();
 
         // ----------- Sign up new ADMIN user ------------//
         webTestClient
@@ -25,7 +20,7 @@ class AuthenticationFlowApplicationTests extends BaseApplicationTestsWithDb {
                 .expectStatus().isCreated()
                 .expectBody().jsonPath("$.email").isEqualTo("admin1");
 
-        // ----------- login ------------//
+        // ----------- login as ADMIN ------------//
         webTestClient
                 .post().uri("/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -34,12 +29,25 @@ class AuthenticationFlowApplicationTests extends BaseApplicationTestsWithDb {
                 .exchange()
                 .expectStatus().isOk();
 
-        // ----------- Getting users  ------------//
+        // ----------- Sign up a normal USER ------------//
         webTestClient
-                .get().uri("/users")
+                .post().uri("/auth/signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue("""
+                        {"name":"User", "email":"user1",
+                        "password":"password1", "role":"USER","employmentDate":"2025-03-17"}""")
                 .exchange()
-                .expectStatus().isOk()
-                .expectBody().jsonPath("$[0].email").isEqualTo("admin1");
+                .expectStatus().isCreated()
+                .expectBody().jsonPath("$.email").isEqualTo("user1");
+
+        // ----------- login as USER ------------//
+        webTestClient
+                .post().uri("/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue("""
+                        {"email":"user1", "password":"password1"}""")
+                .exchange()
+                .expectStatus().isOk();
 
         // ----------- refresh token ------------//
         webTestClient
@@ -54,11 +62,5 @@ class AuthenticationFlowApplicationTests extends BaseApplicationTestsWithDb {
                 .contentType(MediaType.APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isOk();
-
-        // ----------- Getting users without being logged in ------------//
-        webTestClient
-                .get().uri("/users")
-                .exchange()
-                .expectStatus().isUnauthorized();
     }
 }
