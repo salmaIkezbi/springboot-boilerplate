@@ -9,7 +9,10 @@ import java.util.UUID;
 
 public interface UserRepositoryPort {
     User create(NewUser userToCreate);
+
     User update(UpdatedUser userToUpdate);
+
     ImmutableList<User> findAll();
+
     User findByID(UUID id);
 }
