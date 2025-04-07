@@ -63,12 +63,12 @@ class GetUserEndpointIntegrationTests extends BaseWebMvcIntegrationTests {
 
                 // WHEN
                 mockMvc
-                                .perform(get(GET_USER_ENDPOINT, user.id())) // Passer l'ID de l'utilisateur dans l'URL
-                                .andExpect(status().isNotFound()); // Retourne 401 pour non-authentifié
+                                .perform(get(GET_USER_ENDPOINT, user.id()))
+                                .andExpect(status().isNotFound());
         }
 
         @Test
-        void getting_user_without_accessToken_returns_401() throws Exception {
+        void getting_user_without_accessRole_returns_401() throws Exception {
                 // GIVEN
                 User admin = createUserInRepo("admin", "admin", String.valueOf(Role.ADMIN));
                 User user = createUserInRepo("user1", "email1", String.valueOf(Role.USER));
